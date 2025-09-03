@@ -15,7 +15,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Roboto+Mono&display=swap" rel="stylesheet">
-    <link rel="icon" href="img/avatar.png" type="image/png">
+    <link rel="icon" href="img/logo.png" type="image/png">
     <!-- Schema.org markup for Google -->
     <script type="application/ld+json">
     {
@@ -32,6 +32,61 @@
       }
     }
     </script>
+    <style>
+        /* Стили для новой секции "Для кого подходит" */
+        .for-whom {
+            padding: 6rem 0;
+            background-color: var(--bg-secondary);
+            text-align: center;
+        }
+        
+        .for-whom h2 {
+            margin-bottom: 3rem;
+        }
+        
+        .audience-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-top: 40px;
+        }
+        
+        .audience-item {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 2rem 1.5rem;
+            border-radius: 12px;
+            border: 1px solid rgba(42, 150, 255, 0.1);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .audience-item:hover {
+            transform: translateY(-5px);
+            border-color: rgba(42, 150, 255, 0.3);
+            box-shadow: 0 10px 30px rgba(42, 150, 255, 0.2);
+        }
+        
+        .audience-item h3 {
+            margin-bottom: 12px;
+            color: var(--accent-primary);
+            font-size: 1.2rem;
+        }
+        
+        .audience-item p {
+            color: var(--text-secondary);
+            line-height: 1.5;
+            font-size: 0.95rem;
+        }
+        
+        /* Исправление для изображения steps-infographic */
+        .steps-illustration img {
+            max-width: 800px;
+            width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(42, 150, 255, 0.1);
+        }
+    </style>
 </head>
 <body>
     <!-- Главный экран -->
@@ -180,4 +235,3 @@
     </footer>
 </body>
 </html>
-
