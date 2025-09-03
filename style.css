@@ -470,3 +470,38 @@ h2 {
     padding-top: 2rem;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
+
+/* Стили для новой секции "Для кого подходит" */
+.for-whom {
+    padding: 80px 0;
+    background-color: #f8f9fa;
+}
+
+.audience-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 24px;
+    margin-top: 40px;
+}
+
+.audience-item {
+    background: white;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease;
+}
+
+.audience-item:hover {
+    transform: translateY(-5px);
+}
+
+.audience-item h3 {
+    margin-bottom: 12px;
+    color: #2d3748;
+}
+
+.audience-item p {
+    color: #718096;
+    line-height: 1.5;
+}
