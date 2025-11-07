@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ошибка оплаты | Ваш продукт</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .payment-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-primary);
+            padding: 2rem;
+        }
+        
+        .payment-card {
+            background: var(--bg-secondary);
+            padding: 3rem;
+            border-radius: 16px;
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 87, 87, 0.2);
+        }
+        
+        .payment-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(145deg, #ff5757, #ff8a8a);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: white;
+        }
+        
+        .payment-title {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #ff5757;
+        }
+        
+        .payment-message {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        
+        .payment-instructions {
+            background: var(--code-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+            text-align: left;
+            border-left: 4px solid #ff5757;
+        }
+        
+        .payment-instructions h3 {
+            color: #ff5757;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        
+        .payment-instructions p {
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .back-button {
+            display: inline-block;
+            background: #ff5757;
+            color: white;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .retry-button {
+            display: inline-block;
+            background: var(--accent-primary);
+            color: white;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .back-button:hover {
+            background: #ff3838;
+            transform: translateY(-2px);
+        }
+        
+        .retry-button:hover {
+            background: var(--accent-secondary);
+            color: var(--bg-primary);
+            transform: translateY(-2px);
+        }
+        
+        @media (max-width: 768px) {
+            .payment-card {
+                padding: 2rem;
+            }
+            
+            .payment-title {
+                font-size: 1.5rem;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="payment-container">
+        <div class="payment-card">
+            <div class="payment-icon">✕</div>
+            <h1 class="payment-title">Ошибка оплаты</h1>
+            <p class="payment-message">К сожалению, произошла ошибка при обработке вашего платежа.</p>
+            
+            <div class="payment-instructions">
+                <h3>Возможные причины:</h3>
+                <p>• Недостаточно средств на карте</p>
+                <p>• Банк отклонил транзакцию</p>
+                <p>• Техническая ошибка платежной системы</p>
+                <p>• Истекло время ожидания оплаты</p>
+            </div>
+            
+            <p class="payment-message">Вы можете попробовать оплатить снова или вернуться в бота.</p>
+            
+            <div class="button-group">
+                <a href="https://t.me/PostyAEbot" class="back-button">Вернуться в бота</a>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
