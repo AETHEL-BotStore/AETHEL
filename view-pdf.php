@@ -2,7 +2,7 @@
 $file = isset($_GET['file']) ? $_GET['file'] : '';
 $file = urldecode($file);
 $file = basename($file);
-$file_path = 'pdf/' . $file;
+$file_path = 'PDF/' . $file;
 
 if(file_exists($file_path) && strtolower(pathinfo($file_path, PATHINFO_EXTENSION)) == 'pdf') {
     // Открываем файл через PHP с правильными заголовками
