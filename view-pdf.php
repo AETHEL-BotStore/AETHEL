@@ -2,18 +2,18 @@
 $file = isset($_GET['file']) ? $_GET['file'] : '';
 $file = urldecode($file);
 $file = basename($file);
-$file_path = 'PDF/' . $file;
-
-if(file_exists($file_path) && strtolower(pathinfo($file_path, PATHINFO_EXTENSION)) == 'pdf') {
-    // Открываем файл через PHP с правильными заголовками
-    header('Content-Type: application/pdf');
-    header('Content-Disposition: inline; filename="' . basename($file_path) . '"');
-    header('Content-Transfer-Encoding: binary');
-    header('Accept-Ranges: bytes');
-    readfile($file_path);
-    exit;
-} else {
-    header('HTTP/1.0 404 Not Found');
-    echo "Файл не найден";
-}
+$file_url = 'https://www.aethelbotstore.ru/pdf/' . urlencode($file);
 ?>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Просмотр PDF</title>
+    <style>
+        body, html { margin: 0; padding: 0; height: 100%; }
+        iframe { width: 100%; height: 100%; border: none; }
+    </style>
+</head>
+<body>
+    <iframe src="https://docs.google.com/viewer?url=<?php echo urlencode($file_url); ?>&embedded=true"></iframe>
+</body>
+</html>
