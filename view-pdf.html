@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Просмотр PDF</title>
+    <meta charset="utf-8">
+    <style>
+        body, html { margin: 0; padding: 0; height: 100%; }
+        iframe { width: 100%; height: 100%; border: none; }
+    </style>
+</head>
+<body>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        let fileName = urlParams.get('file');
+        
+        if (fileName) {
+            fileName = decodeURIComponent(fileName);
+            // Полный URL к PDF файлу
+            const pdfUrl = 'https://www.aethelbotstore.ru/pdf/' + encodeURIComponent(fileName);
+            // URL Google Docs Viewer
+            const viewerUrl = 'https://docs.google.com/viewer?url=' + encodeURIComponent(pdfUrl) + '&embedded=true';
+            
+            // Перенаправляем на Google Docs Viewer
+            window.location.href = viewerUrl;
+        } else {
+            document.body.innerHTML = '<h2 style="color:red; text-align:center;">Файл не указан</h2>';
+        }
+    </script>
+</body>
+</html>
