@@ -2,337 +2,449 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LashBot - Руководство по админ-панели</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto+Mono:wght@300;400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style1.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    
+    <title>AETHEL — Гайд по админ-панели Telegram бота для мастеров</title>
+    <meta name="description" content="Полное руководство по использованию админ-панели Telegram бота AETHEL. Настройка профиля, управление расписанием, услугами, статистика и многое другое.">
+    <meta name="keywords" content="админ панель телеграм бота, управление расписанием, настройка бота, услуги мастер, статистика записей">
+    
+    <meta property="og:title" content="AETHEL — Гайд по админ-панели Telegram бота">
+    <meta property="og:description" content="Полное руководство по настройке и управлению ботом для мастеров красоты.">
+    
+    <link rel="icon" href="img/logo.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        .faq-hero {
+            padding: 120px 0 60px;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-card) 100%);
+        }
+        
+        .faq-header {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .faq-header h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        
+        .faq-meta {
+            color: var(--text-gray);
+            font-size: 14px;
+            margin-top: 20px;
+        }
+        
+        .guide-card {
+            background: var(--bg-card);
+            border-radius: 32px;
+            padding: 40px;
+            margin-bottom: 32px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .guide-card h2 {
+            font-size: 28px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--pink-primary);
+            display: inline-block;
+        }
+        
+        .guide-card h3 {
+            font-size: 22px;
+            margin: 28px 0 16px;
+            color: var(--pink-primary);
+        }
+        
+        .guide-card h4 {
+            font-size: 18px;
+            margin: 20px 0 12px;
+            color: var(--text-white);
+        }
+        
+        .guide-card p {
+            color: var(--text-gray);
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+        
+        .guide-card ul, .guide-card ol {
+            color: var(--text-gray);
+            margin-left: 24px;
+            margin-bottom: 20px;
+        }
+        
+        .guide-card li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        
+        .admin-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 24px 0;
+        }
+        
+        .admin-card {
+            background: var(--bg-dark);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .admin-card h4 {
+            margin-top: 0;
+            color: var(--pink-primary);
+        }
+        
+        .warning-box {
+            background: rgba(255, 42, 109, 0.1);
+            border-left: 4px solid var(--pink-primary);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 24px 0;
+        }
+        
+        .tip-box {
+            background: rgba(255, 179, 209, 0.1);
+            border-left: 4px solid var(--pink-light);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 24px 0;
+        }
+        
+        .back-home {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 40px;
+            color: var(--pink-primary);
+            text-decoration: none;
+        }
+        
+        @media (max-width: 768px) {
+            .faq-header h1 {
+                font-size: 32px;
+            }
+            
+            .guide-card {
+                padding: 24px;
+            }
+            
+            .guide-card h2 {
+                font-size: 24px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <section class="hero">
-        <header class="hero-header">
-            <img src="img/logo.png" alt="LashBot Logo" class="logo">
-            <div class="social-links">
-                <a href="https://t.me/ADB_for_biz" class="social-link" target="_blank" rel="noopener noreferrer">Канал</a>
-                <a href="https://t.me/tg_auto_dev" class="social-link" target="_blank" rel="noopener noreferrer">Поддержка</a>
-            </div>
-        </header>
 
-        <div class="container hero-content">
-            <div class="hero-text">
-                <h1 class="hero-title">📚 Гайд по использованию админ-панели Telegram бота для мастеров</h1>
-                <p class="hero-subtitle">@tg_auto_dev | June 27, 2025</p>
-                
-                <div class="code-block">
-                    <code>// Полное руководство по началу работы</code>
-                </div>
-                
-                <a href="#start" class="cta-button">Начать изучение</a>
-                <p class="hero-note">Это руководство разделено на две части для разных типов пользователей</p>
-            </div>
-            
-            <div class="hero-image">
-                <img src="img/hero-phone.png" alt="Превью админ-панели LashBot">
+    <div class="container">
+        <a href="index.html" class="back-home">← Вернуться на главную</a>
+    </div>
+
+    <!-- FAQ Hero -->
+    <section class="faq-hero">
+        <div class="container">
+            <div class="faq-header">
+                <h1>📚 Гайд по использованию <span class="pink-gradient">админ-панели</span></h1>
+                <p class="section-subtitle">Полное руководство по настройке и управлению Telegram ботом для мастеров</p>
+                <div class="faq-meta">@AETHEL_support • 25 декабря 2025</div>
             </div>
         </div>
     </section>
 
-    <section id="start" class="about">
-        <div class="container">
-            <h2>🎯 LashBot: Полное руководство по началу работы</h2>
-            <p class="about-description">Это руководство разделено на две части:</p>
-            
-            <div class="features-grid">
-                <div class="feature-card">
-                    <h3>Для Покупателя (Главного Администратора)</h3>
-                    <p>Вы приобрели бота и настраиваете его с нуля.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <h3>Для Мастера</h3>
-                    <p>Вас добавили в уже работающего бота.</p>
-                </div>
-            </div>
+    <!-- Main Content -->
+    <section class="container">
+        
+        <!-- Introduction -->
+        <div class="guide-card">
+            <h2>🎯 AETHEL: Полное руководство по началу работы</h2>
+            <p>Это руководство разделено на две части:</p>
+            <ul>
+                <li><strong>Для Покупателя (Главного Администратора):</strong> Вы приобрели бота и настраиваете его с нуля.</li>
+                <li><strong>Для Мастера:</strong> Вас добавили в уже работающего бота.</li>
+            </ul>
         </div>
-    </section>
-
-    <section class="steps">
-        <div class="container">
+        
+        <!-- PART 1 -->
+        <div class="guide-card">
             <h2>ЧАСТЬ 1: ДЛЯ ПОКУПАТЕЛЯ (ГЛАВНОГО АДМИНИСТРАТОРА)</h2>
-            <p class="section-subtitle">Вы купили бота и вам нужно его создать и настроить.</p>
+            <p>Вы купили бота и вам нужно его создать и настроить.</p>
             
-            <div class="steps-grid">
-                <div class="step-card">
-                    <div class="step-number">1</div>
-                    <h3>🛠 Создание бота в @BotFather</h3>
-                    <p>Найдите в Telegram официального бота @BotFather. Отправьте ему команду /newbot и следуйте инструкциям.</p>
-                </div>
-                
-                <div class="step-card">
-                    <div class="step-number">2</div>
-                    <h3>⚙️ Настройка бота в магазине LashBot</h3>
-                    <p>Перейдите в бота-магазин, где вы приобрели тариф, и введите полученный от @BotFather токен.</p>
-                </div>
-                
-                <div class="step-card">
-                    <div class="step-number">3</div>
-                    <h3>🔑 Ваши права после покупки</h3>
-                    <p>В зависимости от тарифа (Личный, Салон или Бизнес) вы получаете разные уровни доступа и возможности управления.</p>
-                </div>
+            <h3>🛠 Шаг 1: Создание бота в @BotFather</h3>
+            <p>Найдите в Telegram официального бота <strong>@BotFather</strong>.</p>
+            <ol>
+                <li>Отправьте ему команду <strong>/newbot</strong>.</li>
+                <li>Следуйте инструкциям:
+                    <ul>
+                        <li>Придумайте имя бота (например, Lash Studio Анна). Это имя, которое будут видеть пользователи.</li>
+                        <li>Придумайте юзернейм бота (например, LashStudioAnnaBot). Он должен оканчиваться на <strong>...bot</strong> или <strong>..._bot</strong>.</li>
+                    </ul>
+                </li>
+                <li>После создания @BotFather выдаст вам <strong>API-токен</strong> — длинная строка из цифр и букв. Сохраните его!</li>
+            </ol>
+            <div class="warning-box">
+                <p>⚠️ <strong>Важно!</strong> Никому не передавайте API-токен — это ключ доступа к вашему боту.</p>
             </div>
+            
+            <h3>⚙️ Шаг 2: Настройка бота в магазине AETHEL</h3>
+            <p>Перейдите в бота-магазин, где вы приобрели тариф (AETHEL | Личный, AETHEL | Салон или AETHEL | Бизнес).</p>
+            <p>Введите полученный от @BotFather токен и имя бота по запросу.</p>
+            <div class="tip-box">
+                <p>💡 После успешной привязки токена ваш бот активируется. Чтобы перейти в своего бота, просто введите в поиске Telegram его юзернейм (например, @LashStudioAnnaBot) и запустите командой <strong>/start</strong>.</p>
+            </div>
+            
+            <h3>🔑 Ваши права после покупки</h3>
+            <p>Вы автоматически становитесь <strong>Главным Администратором</strong>.</p>
+            <ul>
+                <li><strong>AETHEL | Личный:</strong> Вы — единственный мастер. Добавление других мастеров недоступно.</li>
+                <li><strong>AETHEL | Салон:</strong> Вы — Главный Администратор и мастер. Вы можете добавлять других мастеров в систему.</li>
+                <li><strong>AETHEL | Бизнес:</strong> Вы — Главный Администратор с полным правом управления всеми мастерами, их расписанием и услугами.</li>
+            </ul>
+            <p>Теперь вы можете настроить контент бота и добавить мастеров, если ваш тариф это позволяет.</p>
         </div>
-    </section>
-
-    <section class="benefits">
-        <div class="container">
+        
+        <!-- PART 2 -->
+        <div class="guide-card">
             <h2>ЧАСТЬ 2: ДЛЯ МАСТЕРА (КОТОРОГО ДОБАВИЛИ)</h2>
-            <p class="section-subtitle">Вас добавили в готового бота. Ваша цель — настроить свой профиль и рабочее расписание.</p>
+            <p>Вас добавили в готового бота. Ваша цель — настроить свой профиль и рабочее расписание.</p>
             
-            <div class="benefits-grid">
-                <div class="benefit-item">
-                    <h3>🚀 1. Получение доступа к админ-панели</h3>
-                    <p>Главный администратор добавляет вас в систему командой в боте. Для этого потребуется ваш Telegram ID.</p>
-                </div>
-                
-                <div class="benefit-item">
-                    <h3>2. Вход в админ-панель</h3>
-                    <p>Напишите боту команду /admin. Откроется главное меню с доступными функциями.</p>
-                </div>
-            </div>
+            <h3>🚀 1. Получение доступа к админ-панели</h3>
+            <p>Главный администратор добавляет вас в систему командой в боте:</p>
+            <p><strong>/admin → "Управление мастерами" → "➕ Добавить мастера"</strong></p>
+            <p>Для этого потребуется ваш <strong>Telegram ID</strong> (можно получить, написав команду <strong>/myid</strong> в вашем боте).</p>
+            <p>После добавления вы получите доступ к админ-панели.</p>
+            
+            <h3>2. Вход в админ-панель</h3>
+            <p>Напишите боту команду <strong>/admin</strong>. Откроется главное меню с доступными функциями.</p>
         </div>
-    </section>
-
-    <section class="features">
-        <div class="container">
+        
+        <!-- Admin Panel Overview -->
+        <div class="guide-card">
             <h2>🎛 ОБЗОР АДМИН-ПАНЕЛИ</h2>
             
-            <div class="features-grid">
-                <div class="feature-card">
-                    <h3>🔧 Админ-панель ч.1 (основное меню)</h3>
-                    <p>Далее➡️ - переход к расширенным функциям<br>
-                    Мой профиль - настройка вашей личной информации<br>
-                    Бан пользователей - управление блокировками клиентов<br>
-                    Отправить рассылку - массовые уведомления<br>
-                    Настроить бота (только для главного админа)<br>
-                    Управление мастерами (только для главного админа)<br>
-                    📖 Мануал - это руководство</p>
+            <div class="admin-grid">
+                <div class="admin-card">
+                    <h4>🔧 Админ-панель ч.1 (основное меню)</h4>
+                    <ul>
+                        <li>Далее➡️ - переход к расширенным функциям</li>
+                        <li>Мой профиль - настройка вашей информации</li>
+                        <li>Бан пользователей - блокировка клиентов</li>
+                        <li>Отправить рассылку - массовые уведомления</li>
+                        <li>Настроить бота (только для главного админа)</li>
+                        <li>Управление мастерами (только для главного админа)</li>
+                        <li>📖 Мануал - это руководство</li>
+                    </ul>
                 </div>
                 
-                <div class="feature-card">
-                    <h3>🔧 Админ-панель ч.2 (управление расписанием и услугами)</h3>
-                    <p>⬅️ Назад - возврат в главное меню<br>
-                    Посмотреть записи - просмотр актуальных бронирований<br>
-                    Посмотреть расписание - обзор вашего рабочего графика<br>
-                    Управление расписанием - настройка рабочих дней и перерывов<br>
-                    Управление услугами - добавление, удаление и редактирование ваших услуг<br>
-                    Блокировка времени - ручное закрытие слотов<br>
-                    Статистика - аналитика ваших записей и выручки<br>
-                    Установить постоянный перерыв - настройка ежедневного перерыва<br>
-                    Установить реквизиты - ваши платежные данные для получения предоплат</p>
+                <div class="admin-card">
+                    <h4>🔧 Админ-панель ч.2 (управление расписанием)</h4>
+                    <ul>
+                        <li>⬅️ Назад - возврат в главное меню</li>
+                        <li>Посмотреть записи - просмотр бронирований</li>
+                        <li>Посмотреть расписание - обзор графика</li>
+                        <li>Управление расписанием - настройка дней</li>
+                        <li>Управление услугами - добавление/редактирование</li>
+                        <li>Блокировка времени - ручное закрытие слотов</li>
+                        <li>Статистика - аналитика записей и выручки</li>
+                        <li>Установить реквизиты - платежные данные</li>
+                    </ul>
                 </div>
             </div>
         </div>
-    </section>
-
-    <section class="steps">
-        <div class="container">
-            <h2>👤 Настройка профиля мастера</h2>
-            <p class="section-subtitle">Команда "Мой профиль" - редактирование информации, которую видят клиенты</p>
-            
-            <div class="steps-grid">
-                <div class="step-card">
-                    <h3>✏️ Изменить имя</h3>
-                    <p>Ваше имя для клиентов</p>
-                </div>
-                
-                <div class="step-card">
-                    <h3>📝 Изменить описание</h3>
-                    <p>Информация о вас, вашем опыте и специализации</p>
-                </div>
-                
-                <div class="step-card">
-                    <h3>📍 Изменить адрес</h3>
-                    <p>Место приема клиентов (если выездная, укажите это)</p>
-                </div>
-                
-                <div class="step-card">
-                    <h3>📸 Изменить фото</h3>
-                    <p>Ваше профессиональное фото для анкеты</p>
-                </div>
+        
+        <!-- Profile Setup -->
+        <div class="guide-card">
+            <h2>👤 Настройка профиля мастера (Команда "Мой профиль")</h2>
+            <p>Редактирование информации, которую видят клиенты:</p>
+            <ul>
+                <li><strong>✏️ Изменить имя</strong> — ваше имя для клиентов</li>
+                <li><strong>📝 Изменить описание</strong> — информация о вас, опыте и специализации</li>
+                <li><strong>📍 Изменить адрес</strong> — место приема клиентов (если выездная, укажите это)</li>
+                <li><strong>📸 Изменить фото</strong> — ваше профессиональное фото</li>
+            </ul>
+            <div class="tip-box">
+                <p>💡 <strong>Советы:</strong> Все изменения сразу видны клиентам. Используйте качественное фото. В описании укажите опыт, ключевые услуги и преимущества.</p>
             </div>
-            
-
         </div>
-    </section>
-
-    <section class="benefits">
-        <div class="container">
+        
+        <!-- Schedule Management -->
+        <div class="guide-card">
             <h2>📅 Управление расписанием</h2>
-            <p class="section-subtitle">Создание и настройка расписания работы</p>
-            
-            <div class="benefits-grid">
-                <div class="benefit-item">
-                    <h3>Создание расписания</h3>
-                    <p>Перейдите в "Управление расписанием" → "Составить расписание". Выберите месяц, рабочие дни и установите время работы.</p>
-                </div>
-                
-                <div class="benefit-item">
-                    <h3>Настройка перерывов</h3>
-                    <p>Можно установить постоянный перерыв для всех дней или индивидуальные перерывы для конкретных дней. Минимальная длительность перерыва - 15 минут.</p>
-                </div>
-                
-                <div class="benefit-item">
-                    <h3>Важное ограничение</h3>
-                    <p>Изменять время работы можно только для дней, на которые еще нет записей.</p>
-                </div>
-                
-                <div class="benefit-item">
-                    <h3>Визуальные обозначения</h3>
-                    <p>🔵 — день с существующим расписанием<br>
-                    ❌ — день с записями (расписание нельзя изменить)<br>
-                    Пустая ячейка — свободный день для настройки</p>
-                </div>
+            <p><strong>Создание расписания:</strong></p>
+            <ul>
+                <li>Перейдите в "Управление расписанием" → "Составить расписание"</li>
+                <li>Выберите месяц (зеленая галочка ✅ означает, что расписание на этот месяц уже есть)</li>
+                <li>Выберите рабочие дни: 🔵 — есть расписание, ❌ — есть записи (нельзя изменить)</li>
+                <li>Установите время работы и подтвердите выбор</li>
+            </ul>
+            <p><strong>Настройка перерывов:</strong></p>
+            <ul>
+                <li>Постоянный перерыв для всех дней</li>
+                <li>Индивидуальные перерывы для конкретных дней</li>
+                <li>Минимальная длительность перерыва — 15 минут</li>
+            </ul>
+            <div class="warning-box">
+                <p>⚠️ <strong>Важно:</strong> Изменять время работы можно только для дней, на которые еще нет записей.</p>
             </div>
         </div>
-    </section>
-
-    <section class="features">
-        <div class="container">
+        
+        <!-- Services Management -->
+        <div class="guide-card">
             <h2>💼 Управление услугами</h2>
-            <p class="features-subtitle">Добавление и редактирование услуг, которые вы предоставляете</p>
-            
-            <div class="features-grid">
-                <div class="feature-card">
-                    <h3>Добавление услуги</h3>
-                    <p>Перейдите в раздел "Управление услугами" → "Добавить новую услугу"</p>
-                </div>
-                
-                <div class="feature-card">
-                    <h3>Редактирование услуги</h3>
-                    <p>Измените название, описание, цену и другие параметры существующей услуги</p>
-                </div>
-                
-                <div class="feature-card">
-                    <h3>Установка предоплаты</h3>
-                    <p>Настройте сумму бронирования для каждой услуги (рекомендуется 30-50% от цены)</p>
-                </div>
-                
-                <div class="feature-card">
-                    <h3>Обязательные параметры</h3>
-                    <p>Название, описание, цена, предоплата, длительность выполнения услуги</p>
-                </div>
+            <p><strong>Доступные действия:</strong></p>
+            <ul>
+                <li>Добавить новую услугу</li>
+                <li>Редактировать существующую (название, описание, цена)</li>
+                <li>Установить размер предоплаты (рекомендуется 30-50% от цены)</li>
+            </ul>
+            <p><strong>Обязательные параметры для каждой услуги:</strong></p>
+            <ul>
+                <li>Название — понятное и краткое</li>
+                <li>Описание — детали и особенности</li>
+                <li>Цена — полная стоимость</li>
+                <li>Предоплата — сумма бронирования</li>
+                <li>Длительность — время на выполнение</li>
+            </ul>
+        </div>
+        
+        <!-- Client Bookings -->
+        <div class="guide-card">
+            <h2>👥 Работа с записями клиентов</h2>
+            <p><strong>Просмотр записей:</strong> "Посмотреть записи" → выберите день → список клиентов с информацией о времени, услуге и стоимости.</p>
+            <p><strong>Отмена записей:</strong> Выберите день и запись, подтвердите отмену. Система автоматически сообщит клиенту.</p>
+            <p><strong>Статистика:</strong> В разделе "Статистика" можно посмотреть количество пользователей, суммарную выручку, выполненные и отмененные записи.</p>
+        </div>
+        
+        <!-- Time Blocking -->
+        <div class="guide-card">
+            <h2>⏰ Блокировка времени</h2>
+            <p>Ручная блокировка слотов: "Блокировка времени" → выберите день и время начала/окончания.</p>
+            <p><strong>Когда использовать:</strong> личные встречи, внеплановые перерывы, технические работы.</p>
+        </div>
+        
+        <!-- Payment Details -->
+        <div class="guide-card">
+            <h2>💳 Настройка реквизитов</h2>
+            <p>Перейдите в "Установить реквизиты" и введите данные в формате:</p>
+            <ul>
+                <li>Номер карты или телефона</li>
+                <li>Название банка (например, Тинькофф, Сбербанк)</li>
+            </ul>
+            <div class="warning-box">
+                <p>⚠️ Эти реквизиты увидят клиенты при оплате предоплаты. Своевременно обновляйте данные при смене карты.</p>
             </div>
         </div>
-    </section>
-
-    <section class="steps">
-        <div class="container">
-            <h2>Дополнительные функции админ-панели</h2>
-            
-            <div class="steps-grid">
-                <div class="step-card">
-                    <h3>👥 Работа с записями клиентов</h3>
-                    <p>Просмотр, отмена записей, статистика по выполненным и отмененным записям, суммарная выручка</p>
-                </div>
-                
-                <div class="step-card">
-                    <h3>⏰ Блокировка времени</h3>
-                    <p>Ручная блокировка слотов для личных встреч, внеплановых перерывов или технических работ</p>
-                </div>
-                
-                <div class="step-card">
-                    <h3>💳 Настройка реквизитов</h3>
-                    <p>Добавление платежных данных для получения предоплат в формате: номер карты/телефона и название банка</p>
-                </div>
-                
-                <div class="step-card">
-                    <h3>🔔 Рассылка уведомлений</h3>
-                    <p>Массовые рассылки клиентам с возможностью добавления кнопки с ссылкой</p>
-                </div>
-                
-                <div class="step-card">
-                    <h3>🚫 Бан пользователей</h3>
-                    <p>Блокировка клиентов за неадекватное поведение, многократные отмены или нарушение правил</p>
-                </div>
-                
-                <div class="step-card">
-                    <h3>⚙️ Настройка контента бота</h3>
-                    <p>Только для главного администратора: редактирование приветствия, информации, списка услуг, локации, отзывов</p>
-                </div>
+        
+        <!-- Broadcasts -->
+        <div class="guide-card">
+            <h2>🔔 Рассылка уведомлений</h2>
+            <p>"Отправить рассылку" → напишите текст → при необходимости добавьте кнопку с ссылкой.</p>
+            <p><strong>Как добавить кнопку:</strong> после текста отступите строку и введите название кнопки, затем дефис и ссылку.</p>
+            <div class="tip-box">
+                <p>💡 <strong>Рекомендации:</strong> Лучшее время для рассылки — с 11:00 до 16:00 по будням. Не злоупотребляйте, отправляйте только важную информацию.</p>
             </div>
         </div>
-    </section>
-
-    <section class="benefits">
-        <div class="container">
+        
+        <!-- User Ban -->
+        <div class="guide-card">
+            <h2>🚫 Бан пользователей</h2>
+            <p>"Бан пользователей" → выберите пользователя → подтвердите блокировку.</p>
+            <p><strong>Основания для бана:</strong> неадекватное поведение, многократные отмены в последний момент, нарушение правил.</p>
+        </div>
+        
+        <!-- Bot Content Settings -->
+        <div class="guide-card">
+            <h2>⚙️ Настройка контента бота (ТОЛЬКО для главного администратора)</h2>
+            <p><strong>Доступные разделы для редактирования:</strong></p>
+            <ul>
+                <li><strong>Приветствие</strong> — сообщение при команде /start</li>
+                <li><strong>Информация</strong> — раздел "Важно"</li>
+                <li><strong>Список услуг</strong> — общее описание услуг салона</li>
+                <li><strong>Локация</strong> — адрес и карта проезда</li>
+                <li><strong>Отзывы</strong> — ссылка на канал с отзывами</li>
+            </ul>
+            <div class="tip-box">
+                <p>💡 <strong>Советы по оформлению:</strong> Используйте emoji для визуального разделения, добавляйте качественные фото работ, регулярно проверяйте актуальность информации и цен.</p>
+            </div>
+        </div>
+        
+        <!-- Troubleshooting -->
+        <div class="guide-card">
             <h2>🆘 Решение проблем</h2>
             
-            <div class="benefits-grid">
-                <div class="benefit-item">
-                    <h3>Клиент не может записаться на нужное время?</h3>
-                    <p>Проверьте, не заблокирован ли этот слот в "Блокировка времени", нет ли перерыва, помещается ли время выполнения услуги.</p>
-                </div>
-                
-                <div class="benefit-item">
-                    <h3>Клиент не может оплатить предоплату?</h3>
-                    <p>Проверьте, правильно ли указаны реквизиты в разделе "Установить реквизиты".</p>
-                </div>
-                
-                <div class="benefit-item">
-                    <h3>Произошел технический сбой, бот не отвечает?</h3>
-                    <p>Попробуйте перезагрузить сессию бота, отправив команды /start и /admin.</p>
-                </div>
-                
-                <div class="benefit-item">
-                    <h3>Нужна дополнительная помощь?</h3>
-                    <p>По всем техническим вопросам обращайтесь в поддержку: @tg_auto_dev</p>
-                </div>
-            </div>
+            <h3>❓ Клиент не может записаться на нужное время?</h3>
+            <p>Проверьте, не заблокирован ли слот, нет ли перерыва, помещается ли время выполнения услуги.</p>
+            
+            <h3>❓ Клиент не может оплатить предоплату?</h3>
+            <p>Проверьте, правильно ли указаны реквизиты в разделе "Установить реквизиты".</p>
+            
+            <h3>❓ Бот не отвечает?</h3>
+            <p>Попробуйте перезагрузить сессию, отправив команды /start и /admin. Если проблема не исчезла, обратитесь в поддержку.</p>
         </div>
+        
+        <!-- Support -->
+        <div class="guide-card">
+            <h2>📞 Нужна помощь?</h2>
+            <p>По всем техническим вопросам и вопросам по настройке обращайтесь в поддержку:</p>
+            <p style="font-size: 20px; margin-top: 16px;"><strong>@AETHEL_support</strong></p>
+            <p style="margin-top: 24px; font-size: 18px;">Приятной и продуктивной работы с вашим ботом! 🤖💖</p>
+        </div>
+        
     </section>
-
+    
+    <!-- Final CTA -->
     <section class="final-cta">
         <div class="container">
-            <div class="cta-content">
-                <h2>Приятной и продуктивной работы с вашим LashBot! 🤖💖</h2>
-                <p>Освоив админ-панель, вы сможете эффективно управлять своим расписанием, клиентами и услугами.</p>
-                <a href="#start" class="cta-button cta-button-large">Перечитать руководство</a>
+            <div class="cta-wrapper">
+                <h2>Готовы начать?</h2>
+                <p>Подключите своего бота и получите AI-администратора</p>
+                <a href="https://t.me/AETHEL_Store_bot?start=ref_7133271669" class="btn-cta" target="_blank">
+                    🚀 Подключить бота
+                </a>
             </div>
         </div>
     </section>
-
+    
+    <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <div class="footer-brand">
-                <img src="img/logo.png" alt="LashBot Logo" class="footer-logo">
-                <p>Мощный Telegram бот для мастеров и салонов красоты</p>
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <img src="img/logo.png" alt="AETHEL" class="footer-logo">
+                    <p>Твой AI-администратор в Telegram</p>
+                    <div class="social-links">
+                        <a href="https://t.me/AETHEL_bots" target="_blank">📢 Канал</a>
+                        <a href="https://t.me/AETHEL_support" target="_blank">💬 Поддержка</a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4>Страницы</h4>
+                        <a href="index.html">Главная</a>
+                        <a href="faq.html">Гайд по админ-панели</a>
+                        <a href="guide.html">Гайд по подключению</a>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Документы</h4>
+                        <a href="Documents/offer.html">Договор-оферта</a>
+                        <a href="Documents/privacy.html">Политика конфиденциальности</a>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Контакты</h4>
+                        <a href="https://t.me/AETHEL_support">Telegram</a>
+                        <a href="mailto:aethel-botstore@mail.ru">Email</a>
+                    </div>
+                </div>
             </div>
-            
-            <div class="footer-links">
-                <div class="footer-links-column">
-                    <h4>Тарифы</h4>
-                    <a href="#">LashBot | Личный</a>
-                    <a href="#">LashBot | Салон</a>
-                    <a href="#">LashBot | Бизнес</a>
-                </div>
-                
-                <div class="footer-links-column">
-                    <h4>Поддержка</h4>
-                    <a href="#">Документация</a>
-                    <a href="#">Частые вопросы</a>
-                    <a href="#">Техническая поддержка</a>
-                </div>
-                
-                <div class="footer-links-column">
-                    <h4>Контакты</h4>
-                    <a href="#">Telegram: @tg_auto_dev</a>
-                    <a href="#">Email: aethel-botstore@mail.ru</a>
-                </div>
-            </div>
-            
-            <div class="footer-copyright">
-                <p>© 2025 LashBot. Все права защищены.</p>
+            <div class="footer-bottom">
+                <p>© 2025-2026 AETHEL. Все права защищены.</p>
             </div>
         </div>
     </footer>
