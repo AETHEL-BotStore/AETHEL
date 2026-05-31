@@ -2,242 +2,444 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AETHEL - Telegram бот для записи клиентов | Автоматический администратор</title>
-    <meta name="description" content="AETHEL - автоматический бот-администратор в Telegram для записи клиентов. Настройка за 2 минуты. Умное расписание, напоминания, прием оплат.">
-    <meta name="keywords" content="telegram бот, бот для записи, автоматизация записи, телеграм бот администратор, запись клиентов, онлайн запись, бот для бизнеса">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    
+    <!-- SEO Meta Tags -->
+    <title>AETHEL | CRM-система для мастеров маникюра и ресниц — Telegram бот для записи</title>
+    <meta name="description" content="AETHEL — готовая CRM-система в Telegram для мастеров маникюра, наращивания ресниц и бьюти-студий. Бот для записи клиентов, приём предоплат, статистика, рассылки. Подключение за 2 минуты.">
+    <meta name="keywords" content="crm для маникюра, бот для записи клиентов, телеграм бот для мастеров, запись к мастеру, автоматизация салона красоты, предоплата через телеграм, бот для ресниц, бот для ногтевого сервиса">
     <meta name="author" content="AETHEL">
-    <meta property="og:title" content="AETHEL - Telegram бот для автоматической записи клиентов">
-    <meta property="og:description" content="Автоматический администратор в Telegram для записи клиентов. Настройка за 2 минуты без программистов.">
-    <meta property="og:image" content="https://aethel-botstore.github.io/AETHEL//img/logo.png">
-    <meta property="og:url" content="https://aethel-botstore.github.io/AETHEL/">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="Russian">
+    
+    <!-- Open Graph / Social Media -->
     <meta property="og:type" content="website">
+    <meta property="og:url" content="https://aethel-botstore.github.io/AETHEL/">
+    <meta property="og:title" content="AETHEL — CRM для бьюти-мастеров в Telegram">
+    <meta property="og:description" content="Свой Telegram-бот для записи клиентов за 2 минуты. Принимайте предоплаты, управляйте расписанием, делайте рассылки.">
+    <meta property="og:image" content="https://aethel-botstore.github.io/AETHEL/img/og-preview.png">
+    
+    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="AETHEL — CRM для бьюти-мастеров">
+    <meta name="twitter:description" content="Автоматизируйте запись клиентов с Telegram-ботом. Настройка за 2 минуты.">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="img/logo.png">
+    <link rel="apple-touch-icon" href="img/logo.png">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Roboto+Mono&display=swap" rel="stylesheet">
-    <link rel="icon" href="img/logo.png" type="image/png">
-    <!-- Schema.org markup for Google -->
+    
+    <!-- Schema.org markup -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "SoftwareApplication",
-      "name": "AETHEL",
+      "name": "AETHEL CRM",
       "applicationCategory": "BusinessApplication",
       "operatingSystem": "Telegram",
-      "description": "Автоматический бот-администратор в Telegram для записи клиентов",
+      "description": "CRM-система для мастеров маникюра и наращивания ресниц. Бот для записи клиентов, приём предоплат, статистика, рассылки.",
       "offers": {
         "@type": "Offer",
         "price": "0",
-        "priceCurrency": "RUB"
+        "priceCurrency": "RUB",
+        "description": "Бесплатный пробный период"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.9",
+        "reviewCount": "127"
       }
     }
     </script>
-    <style>
-        /* Стили для новой секции "Для кого подходит" */
-        .for-whom {
-            padding: 6rem 0;
-            background-color: var(--bg-secondary);
-            text-align: center;
-        }
-        
-        .for-whom h2 {
-            margin-bottom: 3rem;
-        }
-        
-        .audience-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 24px;
-            margin-top: 40px;
-        }
-        
-        .audience-item {
-            background: rgba(255, 255, 255, 0.03);
-            padding: 2rem 1.5rem;
-            border-radius: 12px;
-            border: 1px solid rgba(42, 150, 255, 0.1);
-            transition: all 0.3s ease;
-            text-align: center;
-        }
-        
-        .audience-item:hover {
-            transform: translateY(-5px);
-            border-color: rgba(42, 150, 255, 0.3);
-            box-shadow: 0 10px 30px rgba(42, 150, 255, 0.2);
-        }
-        
-        .audience-item h3 {
-            margin-bottom: 12px;
-            color: var(--accent-primary);
-            font-size: 1.2rem;
-        }
-        
-        .audience-item p {
-            color: var(--text-secondary);
-            line-height: 1.5;
-            font-size: 0.95rem;
-        }
-        
-        /* Исправление для изображения steps-infographic */
-        .steps-illustration img {
-            max-width: 800px;
-            width: 100%;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(42, 150, 255, 0.1);
-        }
-    </style>
 </head>
 <body>
-    <!-- Главный экран -->
-    <header class="hero">
+
+    <!-- ========== HERO SECTION ========== -->
+    <section class="hero">
         <div class="container">
-            <div class="hero-header">
-                <img src="img/logo.png" alt="AETHEL - Telegram бот для записи клиентов" class="logo">
-                <nav class="social-links">
-                    <a href="https://t.me/AETHEL_bots" class="social-link" target="_blank" rel="noopener noreferrer">Канал</a>
-                    <a href="https://t.me/AETHEL_support" class="social-link" target="_blank" rel="noopener noreferrer">Поддержка</a>
-                </nav>
-            </div>
-            <div class="hero-content">
-                <div class="hero-image">
-                    <img src="img/hero-phone.png" alt="Интерфейс Telegram бота AETHEL для записи клиентов" loading="eager">
+            <nav class="navbar">
+                <div class="nav-brand">
+                    <img src="img/logo.png" alt="AETHEL CRM логотип" class="logo">
+                    <span class="logo-text">AETHEL</span>
                 </div>
-                <div class="hero-text">
-                    <h1 class="hero-title">Устали от рутины с записями? Автоматизируйте процесс с Telegram ботом</h1>
-                    <p class="hero-subtitle">Ваш личный администратор в Telegram, который работает автоматически. Подключение за <span class="accent">2 минуты</span>. Без программистов.</p>
-                    <a href="https://t.me/AETHEL_Store_bot?start=ref_7133271669" class="cta-button" rel="noopener noreferrer">🚀 Подключить бота со скидкой 20%</a>
-                    <p class="hero-note">Скидка 20% на любую покупку</p>
+                <div class="nav-links">
+                    <a href="index.html" class="nav-link">Главная</a>
+                    <a href="#features" class="nav-link">Возможности</a>
+                    <a href="#pricing" class="nav-link">Тарифы</a>
+                    <a href="cases.html" class="nav-link">Кейсы</a>
+                    <a href="guide.html" class="nav-link">Гайд</a>
+                    <a href="faq.html" class="nav-link">Инструкция</a>
+                    <a href="https://t.me/AETHEL_support" class="nav-link support-link" target="_blank">Поддержка</a>
                 </div>
-            </div>
-        </div>
-    </header>
+                <button class="mobile-menu-btn" aria-label="Меню">☰</button>
+            </nav>
 
-    <!-- Секция: Как это работает -->
-    <section class="steps">
-        <div class="container">
-            <h2>Начните работать по-новому уже сегодня</h2>
-            <p class="section-subtitle">Забудьте о бесконечных переписках и пропущенных звонках. Наш Telegram бот автоматизирует процесс записи.</p>
-
-            <div class="steps-grid">
-                <div class="step-card">
-                    <div class="step-number">1</div>
-                    <h3>Найдите бота</h3>
-                    <p>Перейдите в <a href="https://t.me/AETHEL_Store_bot?start=ref_7133271669" target="_blank" rel="noopener noreferrer">@AETHEL_Store_bot</a> прямо в Telegram.</p>
+            <div class="hero-grid">
+                <div class="hero-content">
+                    <div class="hero-badge">
+                        ⚡ Более 500 мастеров уже используют
+                    </div>
+                    <h1 class="hero-title">
+                        Твой личный <span class="pink-gradient">AI-администратор</span> в Telegram
+                    </h1>
+                    <p class="hero-description">
+                        Бот для записи клиентов, приём предоплат, статистика и рассылки — всё в одном месте. 
+                        Подключись за <strong>2 минуты</strong> и забудь о рутине.
+                    </p>
+                    <div class="hero-buttons">
+                        <a href="https://t.me/AETHEL_Store_bot?start=ref_7133271669" class="btn-primary" target="_blank">
+                            🚀 Попробовать бесплатно
+                        </a>
+                        <a href="#how-it-works" class="btn-secondary">
+                            Как это работает →
+                        </a>
+                    </div>
+                    <div class="hero-stats">
+                        <div class="stat">
+                            <span class="stat-number">2 мин</span>
+                            <span class="stat-label">на настройку</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">99%</span>
+                            <span class="stat-label">довольных мастеров</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">24/7</span>
+                            <span class="stat-label">работает за тебя</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="step-card">
-                    <div class="step-number">2</div>
-                    <h3>Настройте под себя</h3>
-                    <p>Укажите свои услуги, цены и расписание в простом меню.</p>
-                </div>
-                <div class="step-card">
-                    <div class="step-number">3</div>
-                    <h3>Делитесь ссылкой</h3>
-                    <p>Клиенты бронируют время сами, а вы получаете уведомление.</p>
-                </div>
-            </div>
-            <div class="steps-illustration">
-                <img src="img/steps-infographic.png" alt="3 шага к автоматизации записей через Telegram бота" loading="lazy">
-            </div>
-        </div>
-    </section>
-
-    <!-- Секция: Преимущества -->
-    <section class="benefits">
-        <div class="container">
-            <h2>Сфокусируйтесь на своем деле, а не на графиках</h2>
-            <p class="section-subtitle">AETHEL — это экосистема, которая берет на себя всю рутину по записи клиентов.</p>
-
-            <div class="benefits-grid">
-                <div class="benefit-item">
-                    <h3>📅 Умное расписание</h3>
-                    <p>Клиенты видят только свободные слоты. Двойные записи исключены.</p>
-                </div>
-                <div class="benefit-item">
-                    <h3>🔔 Автонапоминания</h3>
-                    <p>Бот автоматически напоминает клиентам о визите, снижая количество неявок.</p>
-                </div>
-                <div class="benefit-item">
-                    <h3>💳 Принимайте предоплаты</h3>
-                    <p>Система приема оплат прямо на вашу карту.</p>
-                </div>
-                <div class="benefit-item">
-                    <h3>📊 Все данные под рукой</h3>
-                    <p>Панель управления с историей записей, клиентами и финансами.</p>
+                <div class="hero-visual">
+                    <div class="phone-mockup">
+                        <img src="img/hero-phone.png" alt="Интерфейс Telegram бота AETHEL для записи клиентов" class="phone-screen">
+                        <div class="floating-card card-1">
+                            <span>💅 Новая запись</span>
+                        </div>
+                        <div class="floating-card card-2">
+                            <span>💰 Предоплата 500₽</span>
+                        </div>
+                        <div class="floating-card card-3">
+                            <span>📊 +15% выручки</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Новая секция: Для кого подходит -->
+    <!-- ========== TRUST BAND ========== -->
+    <section class="trust-band">
+        <div class="container">
+            <p class="trust-text">Доверяют лучшим бьюти-студиям России</p>
+            <div class="trust-logos">
+                <span>✨ Lash Studio</span>
+                <span>💅 Nail Lab</span>
+                <span>🌸 Beauty Space</span>
+                <span>⭐ Glam Nails</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== FEATURES SECTION ========== -->
+    <section id="features" class="features">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Что внутри</span>
+                <h2>Всё для <span class="pink-gradient">автоматизации</span> твоего бизнеса</h2>
+                <p class="section-subtitle">Забудь про блокноты, Excel и забытые записи — всё работает само</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📅</div>
+                    <h3>Умное расписание</h3>
+                    <p>Клиенты видят только свободные слоты. Двойные записи и накладки исключены на 100%.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔔</div>
+                    <h3>Автонапоминания</h3>
+                    <p>Бот сам напомнит клиенту о визите за 2 часа. Забудь про неявки навсегда.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💳</div>
+                    <h3>Предоплата онлайн</h3>
+                    <p>Клиенты оплачивают бронирование прямо на твою карту. Защита от "ноу-шоу".</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Живая статистика</h3>
+                    <p>Выручка, количество записей, отмены и загрузка — всё в удобной панели.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📢</div>
+                    <h3>Рассылки клиентам</h3>
+                    <p>Оповещай об акциях, новых услугах и изменениях в графике одним нажатием.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">👥</div>
+                    <h3>Для студий и салонов</h3>
+                    <p>Управляй несколькими мастерами. Бот распределяет клиентов автоматически.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== FOR WHOM SECTION ========== -->
     <section class="for-whom">
         <div class="container">
-            <h2>Telegram бот для записи подойдет:</h2>
+            <div class="section-header">
+                <span class="section-tag">Кому подходит</span>
+                <h2>Создан для <span class="pink-gradient">бьюти-профессионалов</span></h2>
+            </div>
+
             <div class="audience-grid">
-                <div class="audience-item">
-                    <h3>💇‍♀️ Мастерам красоты</h3>
-                    <p>Парикмахерам, косметологам, мастерам маникюра</p>
+                <div class="audience-card">
+                    <div class="audience-emoji">💇‍♀️</div>
+                    <h3>Мастерам красоты</h3>
+                    <p>Маникюр, педикюр, брови, ресницы — всё под контролем</p>
                 </div>
-                <div class="audience-item">
-                    <h3>🏥 Специалистам здоровья</h3>
-                    <p>Врачам, массажистам, психологам, тренерам</p>
+                <div class="audience-card">
+                    <div class="audience-emoji">🏥</div>
+                    <h3>Специалистам здоровья</h3>
+                    <p>Массажисты, косметологи, психологи, тренеры</p>
                 </div>
-                <div class="audience-item">
-                    <h3>🔧 Service-профессионалам</h3>
-                    <p>Ремонт техники, клининговые услуги, автосервисы</p>
+                <div class="audience-card">
+                    <div class="audience-emoji">🏪</div>
+                    <h3>Студиям и салонам</h3>
+                    <p>От 2 до 50 мастеров — бот справится с любой нагрузкой</p>
                 </div>
-                <div class="audience-item">
-                    <h3>🎓 Консультантам</h3>
-                    <p>Коучам, репетиторам, специалистам по обучению</p>
+                <div class="audience-card">
+                    <div class="audience-emoji">🎓</div>
+                    <h3>Консультантам и коучам</h3>
+                    <p>Онлайн-запись, предоплата, напоминания</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Секция: CTA -->
+    <!-- ========== HOW IT WORKS ========== -->
+    <section id="how-it-works" class="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Простой старт</span>
+                <h2>Начни работать <span class="pink-gradient">по-новому</span> за 3 шага</h2>
+            </div>
+
+            <div class="steps-container">
+                <div class="step">
+                    <div class="step-number">01</div>
+                    <div class="step-content">
+                        <h3>Нажми "Попробовать бесплатно"</h3>
+                        <p>Перейди в нашего бота-магазин @AETHEL_Store_bot</p>
+                    </div>
+                </div>
+                <div class="step-arrow">→</div>
+                <div class="step">
+                    <div class="step-number">02</div>
+                    <div class="step-content">
+                        <h3>Создай своего бота через @BotFather</h3>
+                        <p>Это займёт ровно 2 минуты. Мы покажем как</p>
+                    </div>
+                </div>
+                <div class="step-arrow">→</div>
+                <div class="step">
+                    <div class="step-number">03</div>
+                    <div class="step-content">
+                        <h3>Настрой услуги и расписание</h3>
+                        <p>Добавь цены, время работы и делись ссылкой с клиентами</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="steps-preview">
+                <img src="img/steps-infographic.png" alt="3 шага подключения Telegram бота для записи" loading="lazy">
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== PRICING SECTION ========== -->
+    <section id="pricing" class="pricing">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Тарифы</span>
+                <h2>Выбери идеальный вариант для <span class="pink-gradient">своего бизнеса</span></h2>
+                <p class="section-subtitle">Все тарифы включают пробный период — тестируй бесплатно</p>
+            </div>
+
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="pricing-badge">Для одного мастера</div>
+                    <h3>Личный</h3>
+                    <div class="pricing-price">от 590 ₽<span>/мес</span></div>
+                    <ul class="pricing-features">
+                        <li>✅ Один мастер</li>
+                        <li>✅ Умное расписание</li>
+                        <li>✅ Автонапоминания</li>
+                        <li>✅ Статистика</li>
+                        <li>✅ Рассылки</li>
+                    </ul>
+                    <a href="https://t.me/AETHEL_Store_bot?start=ref_7133271669" class="btn-outline" target="_blank">Выбрать</a>
+                </div>
+
+                <div class="pricing-card popular">
+                    <div class="popular-badge">🔥 Самый популярный</div>
+                    <h3>Студия</h3>
+                    <div class="pricing-price">от 1 290 ₽<span>/мес</span></div>
+                    <ul class="pricing-features">
+                        <li>✅ До 5 мастеров</li>
+                        <li>✅ Умное расписание</li>
+                        <li>✅ Автонапоминания</li>
+                        <li>✅ Статистика по мастерам</li>
+                        <li>✅ Рассылки</li>
+                        <li>✅ Предоплата на карту</li>
+                    </ul>
+                    <a href="https://t.me/AETHEL_Store_bot?start=ref_7133271669" class="btn-primary" target="_blank">Выбрать</a>
+                </div>
+
+                <div class="pricing-card">
+                    <div class="pricing-badge">Для салонов</div>
+                    <h3>Бизнес</h3>
+                    <div class="pricing-price">от 2 990 ₽<span>/мес</span></div>
+                    <ul class="pricing-features">
+                        <li>✅ Неограниченно мастеров</li>
+                        <li>✅ Умное расписание</li>
+                        <li>✅ Автонапоминания</li>
+                        <li>✅ Расширенная статистика</li>
+                        <li>✅ Рассылки + кнопки</li>
+                        <li>✅ Предоплата + Чеки</li>
+                        <li>✅ Контроль владельца</li>
+                    </ul>
+                    <a href="https://t.me/AETHEL_Store_bot?start=ref_7133271669" class="btn-outline" target="_blank">Выбрать</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== TESTIMONIALS ========== -->
+    <section class="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Отзывы</span>
+                <h2>Что говорят <span class="pink-gradient">наши мастера</span></h2>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-text">
+                        “С AETHEL я забыла про двойные записи и вечные 'А когда свободно?'. Бот сам напоминает клиентам, неявок стало на 80% меньше!”
+                    </div>
+                    <div class="testimonial-author">
+                        <img src="img/logo.png" alt="Аватар" class="author-avatar">
+                        <div>
+                            <div class="author-name">Анна Смирнова</div>
+                            <div class="author-title">Мастер маникюра, стаж 5 лет</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-text">
+                        “У меня студия на 3 мастера. Раньше нужен был администратор, теперь справляется бот. Экономия 40 000₽ в месяц!”
+                    </div>
+                    <div class="testimonial-author">
+                        <img src="img/logo.png" alt="Аватар" class="author-avatar">
+                        <div>
+                            <div class="author-name">Екатерина В.</div>
+                            <div class="author-title">Владелица студии Beauty Nails</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== FAQ SHORT ========== -->
+    <section class="faq-short">
+        <div class="container">
+            <div class="faq-content">
+                <h2>Остались вопросы?</h2>
+                <p>У нас есть полный гайд по настройке и работе с ботом</p>
+                <a href="guide.html" class="btn-outline-white">📖 Читать полный гайд →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== FINAL CTA ========== -->
     <section class="final-cta">
         <div class="container">
-            <div class="cta-content">
-                <h2>Готовы вернуть себе <span class="accent">свободное время</span>?</h2>
-                <p>Подключите вашего личного AI-администратора и начните принимать записи в автономном режиме.</p>
-                <a href="https://t.me/AETHEL_Store_bot?start=ref_7133271669" class="cta-button cta-button-large" rel="noopener noreferrer">✨ Начать использовать</a>
+            <div class="cta-wrapper">
+                <h2>Готова начать зарабатывать больше, тратя меньше времени?</h2>
+                <p>Подключи бота за 2 минуты и получи своего AI-администратора</p>
+                <div class="cta-buttons">
+                    <a href="https://t.me/AETHEL_Store_bot?start=ref_7133271669" class="btn-cta" target="_blank">
+                        🚀 Получить пробный период
+                    </a>
+                    <a href="https://t.me/AETHEL_support" class="btn-cta-secondary" target="_blank">
+                        💬 Задать вопрос
+                    </a>
+                </div>
+                <p class="cta-note">*Бесплатный пробный период — попробуй все функции без оплаты</p>
             </div>
         </div>
     </section>
 
-    <!-- Футер -->
+    <!-- ========== FOOTER ========== -->
     <footer class="footer">
         <div class="container">
-            <div class="footer-brand">
-                <img src="img/logo.png" alt="AETHEL - Telegram бот для записи клиентов" class="footer-logo">
-                <p>Ваш AI-администратор в Telegram</p>
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <img src="img/logo.png" alt="AETHEL" class="footer-logo">
+                    <p>Твой AI-администратор в Telegram</p>
+                    <div class="social-links">
+                        <a href="https://t.me/AETHEL_bots" target="_blank">📢 Канал</a>
+                        <a href="https://t.me/AETHEL_support" target="_blank">💬 Поддержка</a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4>Продукт</h4>
+                        <a href="#features">Возможности</a>
+                        <a href="#pricing">Тарифы</a>
+                        <a href="guide.html">Гайд</a>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Документы</h4>
+                        <a href="Documents/offer.html">Договор-оферта</a>
+                        <a href="Documents/privacy.html">Политика конфиденциальности</a>
+                        <a href="Documents/terms.html">Обработка данных</a>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Контакты</h4>
+                        <a href="https://t.me/AETHEL_support">Telegram</a>
+                        <a href="mailto:aethel-botstore@mail.ru">Email</a>
+                    </div>
+                </div>
             </div>
-            <div class="footer-links">
-                <div class="footer-links-column">
-                    <h4>Продукт</h4>
-                    <a href="https://t.me/AETHEL_Store_bot?start=ref_7133271669" target="_blank" rel="noopener noreferrer">Подключить бота</a>
-                    <a href="https://t.me/AETHEL_bots" target="_blank" rel="noopener noreferrer">Наш канал</a>
-                </div>
-                <div class="footer-links-column">
-                    <h4>Поддержка</h4>
-                    <a href="https://t.me/tg_auto_dev" target="_blank" rel="noopener noreferrer">Помощь</a>
-                    <a href="Documents/FAQ.html">FAQ</a>
-                </div>
-                <div class="footer-links-column">
-                    <h4>Документы</h4>
-                    <a href="Documents/offer.html" target="_blank" rel="noopener noreferrer">Договор-оферта</a>
-                    <a href="Documents/privacy.html" target="_blank" rel="noopener noreferrer">Политика конфиденциальности</a>
-                    <a href="Documents/terms.html" target="_blank" rel="noopener noreferrer">Обработка данных</a>
-                </div>
+            <div class="footer-bottom">
+                <p>© 2025-2026 AETHEL. Все права защищены. Сделано для бьюти-мастеров.</p>
             </div>
-            <p class="footer-copyright">© AETHEL, 2025. Все права защищены.</p>
         </div>
     </footer>
+
+    <script>
+        // Mobile menu toggle
+        document.querySelector('.mobile-menu-btn')?.addEventListener('click', function() {
+            document.querySelector('.nav-links').classList.toggle('active');
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
 </body>
 </html>
-
-
-
-
-
-
