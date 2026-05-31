@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    
+    <title>AETHEL — Гайд по подключению бота для записи клиентов</title>
+    <meta name="description" content="Пошаговый гайд по выбору версии и подключению Telegram бота AETHEL для записи клиентов. Настройка за 2 минуты.">
+    <meta name="keywords" content="как подключить бота, настройка телеграм бота, гайд по боту, выбор версии бота, подключение бота для записи">
+    
+    <meta property="og:title" content="AETHEL — Гайд по подключению бота">
+    <meta property="og:description" content="Пошаговая инструкция по выбору версии и настройке вашего личного бота-администратора.">
+    <meta property="og:image" content="https://aethel-botstore.github.io/AETHEL/img/logo.png">
+    
+    <link rel="icon" href="img/logo.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        /* Additional styles for guide page */
+        .guide-hero {
+            padding: 120px 0 60px;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-card) 100%);
+        }
+        
+        .guide-header {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .guide-header h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        
+        .guide-date {
+            color: var(--text-gray);
+            font-size: 14px;
+            margin-top: 20px;
+        }
+        
+        .step-block {
+            background: var(--bg-card);
+            border-radius: 32px;
+            padding: 48px;
+            margin-bottom: 40px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .step-title {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        
+        .step-number-large {
+            width: 56px;
+            height: 56px;
+            background: var(--pink-gradient);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 800;
+            color: white;
+        }
+        
+        .step-title h2 {
+            font-size: 28px;
+            margin: 0;
+        }
+        
+        .version-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin: 32px 0;
+        }
+        
+        .version-card {
+            background: var(--bg-dark);
+            border-radius: 24px;
+            padding: 28px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+        
+        .version-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--pink-primary);
+        }
+        
+        .version-card h3 {
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+        
+        .version-price {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--pink-primary);
+            margin-bottom: 20px;
+        }
+        
+        .version-desc {
+            color: var(--text-gray);
+            margin-bottom: 20px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .version-features {
+            list-style: none;
+            margin-top: 20px;
+        }
+        
+        .version-features li {
+            padding: 8px 0;
+            color: var(--text-gray);
+            font-size: 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .info-box {
+            background: rgba(255, 42, 109, 0.1);
+            border-left: 4px solid var(--pink-primary);
+            padding: 20px 28px;
+            border-radius: 16px;
+            margin: 32px 0;
+        }
+        
+        .info-box p {
+            margin: 0;
+            color: var(--text-gray-light);
+        }
+        
+        .token-example {
+            background: var(--bg-dark);
+            padding: 16px 20px;
+            border-radius: 12px;
+            font-family: monospace;
+            color: var(--pink-primary);
+            margin: 16px 0;
+            word-break: break-all;
+        }
+        
+        .two-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            margin: 32px 0;
+        }
+        
+        .feature-list {
+            background: var(--bg-dark);
+            border-radius: 20px;
+            padding: 24px;
+        }
+        
+        .feature-list h4 {
+            margin-bottom: 16px;
+            color: var(--pink-primary);
+        }
+        
+        .feature-list ul li {
+            padding: 8px 0;
+            color: var(--text-gray);
+        }
+        
+        .back-home {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 40px;
+            color: var(--pink-primary);
+            text-decoration: none;
+        }
+        
+        @media (max-width: 768px) {
+            .step-block {
+                padding: 28px;
+            }
+            
+            .step-title h2 {
+                font-size: 22px;
+            }
+            
+            .guide-header h1 {
+                font-size: 32px;
+            }
+            
+            .two-columns {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .screenshot-placeholder {
+            background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-dark) 100%);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            border: 1px dashed var(--border-color);
+            margin: 24px 0;
+        }
+        
+        .screenshot-placeholder span {
+            color: var(--text-gray);
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <a href="index.html" class="back-home">← Вернуться на главную</a>
+    </div>
+
+    <!-- Guide Hero -->
+    <section class="guide-hero">
+        <div class="container">
+            <div class="guide-header">
+                <h1>📚 Гайд по <span class="pink-gradient">подключению</span> бота</h1>
+                <p class="section-subtitle">Пошаговая инструкция: от выбора версии до запуска своего Telegram-бота</p>
+                <div class="guide-date">@AETHEL_support • Обновлено 25 декабря 2025</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Step 1: Выбор версии -->
+    <section class="container">
+        <div class="step-block">
+            <div class="step-title">
+                <div class="step-number-large">1</div>
+                <h2>Выберите подходящую версию бота</h2>
+            </div>
+            
+            <p style="color: var(--text-gray); margin-bottom: 24px;">Советуем на пробный период выбрать версию <strong style="color: var(--pink-primary);">Maximum (максимум)</strong>, чтобы попробовать все функции. В любой момент версию можно изменить в личном кабинете.</p>
+            
+            <div class="version-grid">
+                <div class="version-card">
+                    <h3>Basic</h3>
+                    <div class="version-price">Базовая</div>
+                    <div class="version-desc">Для старта и самых необходимых функций</div>
+                    <ul class="version-features">
+                        <li>✅ Кнопка «Список услуг»</li>
+                        <li>✅ Кнопка «Как дойти»</li>
+                        <li>✅ Обращение к мастеру</li>
+                        <li>✅ Часовой пояс</li>
+                        <li>✅ Скрытие дней</li>
+                        <li>✅ Максимальный срок записи</li>
+                        <li>✅ Настройка отмены/переноса</li>
+                    </ul>
+                </div>
+                
+                <div class="version-card">
+                    <h3>Pro</h3>
+                    <div class="version-price">Продвинутая</div>
+                    <div class="version-desc">Всё из Basic + дополнительные возможности</div>
+                    <ul class="version-features">
+                        <li>✅ Всё из Basic</li>
+                        <li>✅ Кнопка «Отзывы»</li>
+                        <li>✅ Кнопка «Важно»</li>
+                        <li>✅ Рассылки клиентам</li>
+                        <li>✅ Общий перерыв</li>
+                        <li>✅ Авто-подтверждение записей</li>
+                        <li>✅ Редактирование напоминаний</li>
+                        <li>✅ Предоплата по ссылке</li>
+                    </ul>
+                </div>
+                
+                <div class="version-card">
+                    <h3>Maximum</h3>
+                    <div class="version-price">Максимальная</div>
+                    <div class="version-desc">Все функции для полной автоматизации</div>
+                    <ul class="version-features">
+                        <li>✅ Всё из Basic + Pro</li>
+                        <li>✅ Блокировка времени мастера</li>
+                        <li>✅ Статистика</li>
+                        <li>✅ Индивидуальные перерывы</li>
+                        <li>✅ Бан пользователей</li>
+                        <li>✅ Опция «Требуется снятие»</li>
+                        <li>✅ Уведомление после записи</li>
+                        <li>✅ Мультизапись</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Step 2: Категория бота -->
+        <div class="step-block">
+            <div class="step-title">
+                <div class="step-number-large">2</div>
+                <h2>Выберите категорию под ваш бизнес</h2>
+            </div>
+            
+            <div class="two-columns">
+                <div class="feature-list">
+                    <h4>👤 Личный</h4>
+                    <p style="color: var(--text-gray); margin-bottom: 16px;">Бот для одного мастера, который автоматически записывает клиентов, отвечает на частые вопросы и управляет расписанием.</p>
+                    <ul>
+                        <li>✅ Для одного мастера</li>
+                        <li>✅ Экономит время</li>
+                        <li>✅ Заменяет администратора</li>
+                    </ul>
+                </div>
+                
+                <div class="feature-list">
+                    <h4>🏢 Студия</h4>
+                    <p style="color: var(--text-gray); margin-bottom: 16px;">Система записи для нескольких мастеров. Каждый специалист ведёт своё расписание.</p>
+                    <ul>
+                        <li>✅ До 5 мастеров</li>
+                        <li>✅ Автоматическое распределение</li>
+                        <li>✅ Исключение накладок</li>
+                    </ul>
+                </div>
+                
+                <div class="feature-list">
+                    <h4>💼 Бизнес</h4>
+                    <p style="color: var(--text-gray); margin-bottom: 16px;">Система управления студией для владельца. Контроль записей, расписаний и финансов.</p>
+                    <ul>
+                        <li>✅ Неограниченно мастеров</li>
+                        <li>✅ Контроль загрузки</li>
+                        <li>✅ Финансовые показатели</li>
+                    </ul>
+                </div>
+                
+                <div class="feature-list">
+                    <h4>💰 Бизнес + Платежи</h4>
+                    <p style="color: var(--text-gray); margin-bottom: 16px;">С автоматическим приёмом оплат через банковский эквайринг.</p>
+                    <ul>
+                        <li>✅ Платежи через эквайринг</li>
+                        <li>✅ Авто-подтверждение записи</li>
+                        <li>✅ Чеки по требованию онлайн-кассы</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Step 3: Переход в магазин -->
+        <div class="step-block">
+            <div class="step-title">
+                <div class="step-number-large">3</div>
+                <h2>Перейдите в бот-магазин @AETHEL_Store_bot</h2>
+            </div>
+            
+            <div class="info-box">
+                <p>📌 Нажмите <strong>“Выбрать бота”</strong> → выберите нужную категорию → выберите версию → нажмите <strong>“Подключить”</strong></p>
+            </div>
+            
+            <div class="screenshot-placeholder">
+                <span>📱 Интерфейс бота-магазина AETHEL_Store_bot</span>
+            </div>
+        </div>
+        
+        <!-- Step 4: Создание бота в BotFather -->
+        <div class="step-block">
+            <div class="step-title">
+                <div class="step-number-large">4</div>
+                <h2>Создайте бота в @BotFather</h2>
+            </div>
+            
+            <p style="color: var(--text-gray); margin-bottom: 24px;">Найдите в Telegram официального бота <strong>@BotFather</strong> и выполните следующие шаги:</p>
+            
+            <ol style="color: var(--text-gray); margin-left: 24px; margin-bottom: 24px;">
+                <li>Отправьте команду <strong>/newbot</strong></li>
+                <li>Придумайте имя бота (например, <em>Lash Studio Анна</em>) — его будут видеть пользователи</li>
+                <li>Придумайте юзернейм бота (например, <em>LashStudioAnnaBot</em>) — должен оканчиваться на <strong>...bot</strong> или <strong>..._bot</strong></li>
+                <li>Сохраните полученный <strong>API-токен</strong> (длинная строка из цифр и букв) — это ваш ключ доступа</li>
+            </ol>
+            
+            <div class="token-example">
+                Пример токена: 7234567890:AAGk7xE3fGmH9jKlM2nPqR4sTuV5wXyZ1bC
+            </div>
+            
+            <div class="info-box">
+                <p>⚠️ <strong>Важно!</strong> Никому не передавайте свой API-токен. Это ключ доступа к вашему боту.</p>
+            </div>
+        </div>
+        
+        <!-- Step 5: Ввод токена -->
+        <div class="step-block">
+            <div class="step-title">
+                <div class="step-number-large">5</div>
+                <h2>Введите токен в боте-магазине</h2>
+            </div>
+            
+            <p style="color: var(--text-gray); margin-bottom: 16px;">Вернитесь в бот @AETHEL_Store_bot и:</p>
+            <ul style="color: var(--text-gray); margin-left: 24px; margin-bottom: 24px;">
+                <li>Вставьте полученный от @BotFather токен</li>
+                <li>Придумайте имя бота (его будете видеть только вы в админ-панели)</li>
+            </ul>
+            
+            <div class="info-box">
+                <p>✅ Готово! Ваш бот успешно создан и активирован!</p>
+            </div>
+        </div>
+        
+        <!-- Step 6: Ссылка на бота -->
+        <div class="step-block">
+            <div class="step-title">
+                <div class="step-number-large">6</div>
+                <h2>Получите ссылку на своего бота</h2>
+            </div>
+            
+            <p style="color: var(--text-gray); margin-bottom: 16px;">Чтобы зайти в вашего бота:</p>
+            <ul style="color: var(--text-gray); margin-left: 24px; margin-bottom: 24px;">
+                <li>Введите в поиске Telegram юзернейм, который вы указали в @BotFather</li>
+                <li>Например: <strong>@LashStudioAnnaBot</strong></li>
+                <li>Запустите бота командой <strong>/start</strong></li>
+            </ul>
+            
+            <div class="info-box">
+                <p>📤 <strong>Этой ссылкой делитесь с клиентами!</strong> Они будут записываться к вам через этого бота.</p>
+            </div>
+        </div>
+        
+        <!-- Step 7: Вход в админку -->
+        <div class="step-block">
+            <div class="step-title">
+                <div class="step-number-large">7</div>
+                <h2>Вход в админ-панель</h2>
+            </div>
+            
+            <p style="color: var(--text-gray); margin-bottom: 16px;">Напишите своему боту команду:</p>
+            <div class="token-example" style="text-align: center;">
+                /admin
+            </div>
+            <p style="color: var(--text-gray); margin-top: 16px;">Теперь вы можете настраивать услуги, расписание и управлять ботом.</p>
+        </div>
+        
+        <!-- Поддержка -->
+        <div class="step-block">
+            <div class="step-title">
+                <div class="step-number-large">💬</div>
+                <h2>Нужна помощь?</h2>
+            </div>
+            
+            <div class="two-columns">
+                <div class="feature-list">
+                    <h4>📞 Поддержка</h4>
+                    <p>По всем вопросам обращайтесь к менеджеру:</p>
+                    <p style="margin-top: 12px;"><strong>@AETHEL_support</strong></p>
+                </div>
+                
+                <div class="feature-list">
+                    <h4>📢 Новости и обновления</h4>
+                    <p>Подпишитесь на канал, чтобы быть в курсе всех событий и акций:</p>
+                    <p style="margin-top: 12px;"><strong>@AETHEL_bots</strong></p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Final CTA -->
+    <section class="final-cta">
+        <div class="container">
+            <div class="cta-wrapper">
+                <h2>Готовы создать своего бота?</h2>
+                <p>Начните с пробного периода уже сейчас</p>
+                <a href="https://t.me/AETHEL_Store_bot?start=ref_7133271669" class="btn-cta" target="_blank">
+                    🚀 Перейти в бот-магазин
+                </a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <img src="img/logo.png" alt="AETHEL" class="footer-logo">
+                    <p>Твой AI-администратор в Telegram</p>
+                    <div class="social-links">
+                        <a href="https://t.me/AETHEL_bots" target="_blank">📢 Канал</a>
+                        <a href="https://t.me/AETHEL_support" target="_blank">💬 Поддержка</a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4>Страницы</h4>
+                        <a href="index.html">Главная</a>
+                        <a href="faq.html">Гайд по админ-панели</a>
+                        <a href="guide.html">Гайд по подключению</a>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Документы</h4>
+                        <a href="Documents/offer.html">Договор-оферта</a>
+                        <a href="Documents/privacy.html">Политика конфиденциальности</a>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Контакты</h4>
+                        <a href="https://t.me/AETHEL_support">Telegram</a>
+                        <a href="mailto:aethel-botstore@mail.ru">Email</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2025-2026 AETHEL. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
