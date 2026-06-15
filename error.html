@@ -3,59 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ошибка оплаты | Ваш продукт</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <title>Ошибка оплаты | AETHEL Store</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Roboto+Mono:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <style>
-        .payment-container {
+        /* Дополнительные стили только для страницы оплаты */
+        .payment-page {
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: var(--bg-primary);
+            background: var(--bg-dark);
             padding: 2rem;
         }
         
         .payment-card {
-            background: var(--bg-secondary);
+            background: var(--bg-card);
             padding: 3rem;
-            border-radius: 16px;
+            border-radius: 28px;
             text-align: center;
             max-width: 600px;
             width: 100%;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(255, 87, 87, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .payment-card:hover {
+            border-color: #ff5757;
+            box-shadow: 0 25px 40px -12px rgba(255, 87, 87, 0.2);
         }
         
         .payment-icon {
             width: 80px;
             height: 80px;
             margin: 0 auto 1.5rem;
-            background: linear-gradient(145deg, #ff5757, #ff8a8a);
+            background: linear-gradient(135deg, #ff5757, #ff8a8a);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 2.5rem;
             color: white;
+            font-weight: 700;
         }
         
         .payment-title {
             font-size: 2rem;
             margin-bottom: 1rem;
             color: #ff5757;
+            font-weight: 800;
         }
         
         .payment-message {
-            color: var(--text-secondary);
+            color: var(--text-gray);
             margin-bottom: 2rem;
             line-height: 1.6;
         }
         
         .payment-instructions {
-            background: var(--code-bg);
+            background: var(--bg-dark);
             padding: 1.5rem;
-            border-radius: 8px;
+            border-radius: 20px;
             margin: 2rem 0;
             text-align: left;
             border-left: 4px solid #ff5757;
@@ -68,8 +76,18 @@
         }
         
         .payment-instructions p {
-            color: var(--text-secondary);
-            margin-bottom: 0.5rem;
+            color: var(--text-gray);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .payment-instructions p::before {
+            content: "•";
+            color: #ff5757;
+            font-weight: bold;
+            font-size: 1.2rem;
         }
         
         .button-group {
@@ -85,7 +103,7 @@
             background: #ff5757;
             color: white;
             padding: 0.8rem 2rem;
-            border-radius: 50px;
+            border-radius: 100px;
             font-weight: 600;
             text-decoration: none;
             transition: all 0.3s ease;
@@ -93,13 +111,14 @@
         
         .retry-button {
             display: inline-block;
-            background: var(--accent-primary);
+            background: var(--pink-gradient);
             color: white;
             padding: 0.8rem 2rem;
-            border-radius: 50px;
+            border-radius: 100px;
             font-weight: 600;
             text-decoration: none;
             transition: all 0.3s ease;
+            box-shadow: var(--glow-pink);
         }
         
         .back-button:hover {
@@ -108,9 +127,8 @@
         }
         
         .retry-button:hover {
-            background: var(--accent-secondary);
-            color: var(--bg-primary);
             transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(255, 42, 109, 0.5);
         }
         
         @media (max-width: 768px) {
@@ -129,7 +147,7 @@
     </style>
 </head>
 <body>
-    <div class="payment-container">
+    <div class="payment-page">
         <div class="payment-card">
             <div class="payment-icon">✕</div>
             <h1 class="payment-title">Ошибка оплаты</h1>
@@ -137,10 +155,10 @@
             
             <div class="payment-instructions">
                 <h3>Возможные причины:</h3>
-                <p>• Недостаточно средств на карте</p>
-                <p>• Банк отклонил транзакцию</p>
-                <p>• Техническая ошибка платежной системы</p>
-                <p>• Истекло время ожидания оплаты</p>
+                <p>Недостаточно средств на карте</p>
+                <p>Банк отклонил транзакцию</p>
+                <p>Техническая ошибка платежной системы</p>
+                <p>Истекло время ожидания оплаты</p>
             </div>
             
             <p class="payment-message">Вы можете попробовать оплатить снова или вернуться в бота.</p>
@@ -151,5 +169,4 @@
         </div>
     </div>
 </body>
-
 </html>
