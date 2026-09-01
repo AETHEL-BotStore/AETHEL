@@ -84,6 +84,22 @@
     });
   });
 
+  // Цели Метрики для основных переходов в Telegram и CTA.
+  // В Метрике можно создать JavaScript-события с теми же идентификаторами.
+  document.addEventListener('click', function(event){
+    var link = event.target.closest && event.target.closest('a');
+    if(!link) return;
+    var href = link.getAttribute('href') || '';
+    var goal = link.getAttribute('data-goal');
+    if(!goal && href.indexOf('t.me/AETHEL_Store_bot') !== -1) goal = 'telegram_store';
+    if(!goal && href.indexOf('t.me/AETHEL_support') !== -1) goal = 'telegram_support';
+    if(!goal) return;
+    if(typeof window.ym === 'function') window.ym(112127265, 'reachGoal', goal, {
+      page: location.pathname,
+      link: href
+    });
+  });
+
   // Открыть нужный акк.-пункт, если в ссылке есть #якорь
   window.addEventListener('load', function(){
     if(location.hash){
