@@ -3,73 +3,177 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Правила возврата для клиентов</title>
+    <title>Правила возврата для клиентов — AETHEL</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" type="image/png" href="/assets/aethel-eye-logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800;900&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
     <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; max-width: 800px; margin: 0 auto; padding: 20px; }
-        h1, h2 { color: #333; }
-        .highlight { background-color: #f0f8ff; padding: 10px; border-left: 4px solid #4CAF50; }
+        .doc-page {
+            min-height: 100vh;
+            padding: 3rem 1.5rem;
+            background: var(--void);
+        }
+        .doc-container {
+            max-width: 820px;
+            margin: 0 auto;
+            background: var(--panel);
+            border: 1px solid var(--panel-border);
+            border-radius: var(--radius);
+            padding: 3rem 2.5rem;
+        }
+        .doc-container h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #fff 10%, var(--lilac) 45%, var(--magenta-soft) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .doc-container .doc-sub {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--ink-faint);
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--panel-border);
+        }
+        .doc-container .summary-box {
+            background: var(--void);
+            border-left: 4px solid #34e0a1;
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius-sm);
+            margin: 1rem 0 1.5rem;
+        }
+        .doc-container .summary-box p {
+            margin-bottom: 0;
+            color: var(--ink);
+            font-weight: 500;
+        }
+        .doc-container h2 {
+            font-size: 1.2rem;
+            color: var(--lilac);
+            margin: 1.8rem 0 0.8rem;
+            font-family: var(--font-display);
+        }
+        .doc-container h3 {
+            font-size: 1rem;
+            color: var(--violet-soft);
+            margin: 1.2rem 0 0.5rem;
+            font-family: var(--font-body);
+            font-weight: 700;
+        }
+        .doc-container p {
+            color: var(--ink-dim);
+            font-size: 0.92rem;
+            line-height: 1.7;
+            margin-bottom: 0.8rem;
+        }
+        .doc-container ul {
+            color: var(--ink-dim);
+            font-size: 0.92rem;
+            line-height: 1.7;
+            padding-left: 1.5rem;
+            margin-bottom: 0.8rem;
+        }
+        .doc-container ul li {
+            margin-bottom: 0.4rem;
+        }
+        .doc-container .refund-yes {
+            color: #34e0a1;
+            font-weight: 600;
+        }
+        .doc-container .refund-no {
+            color: #ff5757;
+            font-weight: 600;
+        }
+        .doc-container .doc-footer {
+            margin-top: 2.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--panel-border);
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--ink-faint);
+            text-align: center;
+        }
+        @media (max-width: 600px) {
+            .doc-container {
+                padding: 1.5rem;
+            }
+            .doc-container h1 {
+                font-size: 1.5rem;
+            }
+            .doc-container h2 {
+                font-size: 1rem;
+            }
+        }
     </style>
 </head>
 <body>
-    <h1>Правила возврата предоплаты</h1>
-    
-    <div class="highlight">
-        <p><strong>Кратко:</strong> При отмене за установленное время до записи — возврат 100%. При опоздании или неявке — предоплата не возвращается.</p>
+    <div class="doc-page">
+        <div class="doc-container">
+            <h1>Правила возврата предоплаты</h1>
+            <div class="doc-sub">для клиентов сервиса AETHEL</div>
+
+            <div class="summary-box">
+                <p>📌 <strong>Кратко:</strong> При отмене за установленное время до записи — возврат 100%. При опоздании или неявке — предоплата не возвращается.</p>
+            </div>
+
+            <h2>1. Когда предоплата возвращается</h2>
+            <h3>✅ Полный возврат:</h3>
+            <ul>
+                <li>Вы отменили запись за установленное мастером количество часов до начала</li>
+                <li>Мастер отменил запись (по любой причине)</li>
+                <li>Технический сбой при оплате (двойное списание)</li>
+            </ul>
+
+            <h2>2. Когда предоплата НЕ возвращается</h2>
+            <h3>❌ Возврат не производится:</h3>
+            <ul>
+                <li>Вы отменили запись позже установленного срока</li>
+                <li>Вы не пришли на запись без предупреждения</li>
+                <li>Вы опоздали более чем на 15 минут (решение принимает мастер)</li>
+                <li>Вы передумали получать услугу во время визита</li>
+            </ul>
+
+            <h2>3. Сроки возврата</h2>
+            <ul>
+                <li><strong>На карту:</strong> от 3 до 10 рабочих дней (зависит от банка)</li>
+                <li><strong>Наличными:</strong> в момент обращения к мастеру</li>
+            </ul>
+
+            <h2>4. Как отменить запись</h2>
+            <ol style="color:var(--ink-dim); font-size:0.92rem; line-height:1.7; padding-left:1.5rem;">
+                <li>Зайдите в раздел «📌 Моя запись»</li>
+                <li>Выберите запись, которую хотите отменить</li>
+                <li>Нажмите «❌ Отменить запись»</li>
+                <li>Подтвердите действие</li>
+            </ol>
+            <p>Если до записи больше установленного времени — предоплата вернется автоматически.</p>
+
+            <h2>5. Особые случаи</h2>
+            <h3>Болезнь</h3>
+            <p>При предоставлении подтверждающего документа (справка) вопрос решается индивидуально с мастером.</p>
+
+            <h3>Форс-мажор</h3>
+            <p>При чрезвычайных ситуациях (стихийные бедствия, аварии и т.д.) — решение принимает администрация.</p>
+
+            <h2>6. Спорные ситуации</h2>
+            <p>Если вы не согласны с решением о невозврате:</p>
+            <ol style="color:var(--ink-dim); font-size:0.92rem; line-height:1.7; padding-left:1.5rem;">
+                <li>Обратитесь в поддержку: <a href="https://t.me/AETHEL_support" target="_blank" rel="noopener" style="color:var(--violet-soft)">@AETHEL_support</a></li>
+                <li>Опишите ситуацию и приложите подтверждающие документы</li>
+                <li>Администрация рассмотрит обращение в течение 5 рабочих дней</li>
+            </ol>
+
+            <h2>7. Контакты</h2>
+            <ul>
+                <li>Поддержка: <a href="https://t.me/AETHEL_support" target="_blank" rel="noopener" style="color:var(--violet-soft)">@AETHEL_support</a></li>
+            </ul>
+
+            <div class="doc-footer">Дата последнего обновления: 13 февраля 2026 г.</div>
+        </div>
     </div>
-
-    <h2>1. Когда предоплата возвращается</h2>
-    <h3>✅ Полный возврат:</h3>
-    <ul>
-        <li>Вы отменили запись за установленное мастером количество часов до начала</li>
-        <li>Мастер отменил запись (по любой причине)</li>
-        <li>Технический сбой при оплате (двойное списание)</li>
-    </ul>
-
-    <h2>2. Когда предоплата НЕ возвращается</h2>
-    <h3>❌ Возврат не производится:</h3>
-    <ul>
-        <li>Вы отменили запись позже установленного срока</li>
-        <li>Вы не пришли на запись без предупреждения</li>
-        <li>Вы опоздали более чем на 15 минут (решение принимает мастер)</li>
-        <li>Вы передумали получать услугу во время визита</li>
-    </ul>
-
-    <h2>3. Сроки возврата</h2>
-    <ul>
-        <li><strong>На карту:</strong> от 3 до 10 рабочих дней (зависит от банка)</li>
-        <li><strong>Наличными:</strong> в момент обращения к мастеру</li>
-    </ul>
-
-    <h2>4. Как отменить запись</h2>
-    <ol>
-        <li>Зайдите в раздел «📌 Моя запись»</li>
-        <li>Выберите запись, которую хотите отменить</li>
-        <li>Нажмите «❌ Отменить запись»</li>
-        <li>Подтвердите действие</li>
-    </ol>
-    <p>Если до записи больше установленного времени — предоплата вернется автоматически.</p>
-
-    <h2>5. Особые случаи</h2>
-    <h3>Болезнь</h3>
-    <p>При предоставлении подтверждающего документа (справка) вопрос решается индивидуально с мастером.</p>
-    
-    <h3>Форс-мажор</h3>
-    <p>При чрезвычайных ситуациях (стихийные бедствия, аварии и т.д.) — решение принимает администрация.</p>
-
-    <h2>6. Спорные ситуации</h2>
-    <p>Если вы не согласны с решением о невозврате:</p>
-    <ol>
-        <li>Обратитесь в поддержку: @AETHEL_support</li>
-        <li>Опишите ситуацию и приложите подтверждающие документы</li>
-        <li>Администрация рассмотрит обращение в течение 5 рабочих дней</li>
-    </ol>
-
-    <h2>7. Контакты</h2>
-    <ul>
-        <li>Поддержка: @AETHEL_support</li>
-
-    </ul>
-
-    <p><em>Дата последнего обновления: 13 февраля 2026 г.</em></p>
 </body>
 </html>

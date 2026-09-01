@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Как настроить Telegram-бота для записи клиентов за 5 минут — Инструкция AETHEL</title>
+<meta name="description" content="Пошаговая инструкция по настройке админ-панели Telegram-бота AETHEL: профиль, услуги, расписание, логика записи и подтверждения. Быстрый старт за 5 минут + полный справочник функций.">
+<meta name="keywords" content="как настроить телеграм бота для записи, инструкция телеграм бот запись, админ панель телеграм бота, настройка бота для мастера, как составить расписание в боте">
+<link rel="canonical" href="https://www.aethelbotstore.ru/guide/">
+<meta name="robots" content="index, follow">
+<link rel="icon" type="image/png" href="/assets/aethel-eye-logo.png">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.aethelbotstore.ru/guide/">
+<meta property="og:title" content="Как настроить Telegram-бота для записи клиентов за 5 минут">
+<meta property="og:description" content="Быстрый старт: профиль, услуги, расписание и первая тестовая запись + полный справочник функций панели.">
+<meta property="og:image" content="https://www.aethelbotstore.ru/assets/aethel-eye-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800;900&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "Как настроить Telegram-бота для записи клиентов за 5 минут",
+  "step": [
+    {"@type":"HowToStep","name":"Заполните профиль","text":"Имя, фото, адрес и описание в разделе Профиль."},
+    {"@type":"HowToStep","name":"Укажите реквизиты","text":"Телефон и банк для приёма предоплаты."},
+    {"@type":"HowToStep","name":"Настройте приветствие","text":"Текст и фото, которые видит клиент при первом запуске."},
+    {"@type":"HowToStep","name":"Добавьте услугу","text":"Название, цена, длительность и предоплата."},
+    {"@type":"HowToStep","name":"Составьте расписание","text":"Выберите месяц, рабочие дни и время — бот сам нарежет окна для записи."}
+  ]
+}
+</script>
+<style>
+  /* Стили, уникальные для страницы инструкции — не тащим их в общий style.css,
+     чтобы не раздувать его для страниц, где эти блоки не используются. */
+
+  .process{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:0; }
+  .proc-step{ position:relative; padding:20px 18px; text-align:center; background:var(--panel); border:1px solid var(--panel-border); }
+  .proc-step:first-child{ border-radius:var(--radius-sm) 0 0 var(--radius-sm); }
+  .proc-step:last-child{ border-radius:0 var(--radius-sm) var(--radius-sm) 0; }
+  .proc-step + .proc-step{ border-left:none; }
+  .proc-ic{ font-size:1.5rem; display:block; margin-bottom:8px; }
+  .proc-step h5{ font-family:var(--font-body); font-weight:800; font-size:.8rem; margin:0 0 4px; color:var(--ink); }
+  .proc-step span{ font-size:.72rem; color:var(--ink-faint); }
+  @media(max-width:760px){
+    .process{ grid-template-columns:1fr; }
+    .proc-step{ border-radius:0 !important; border-left:1px solid var(--panel-border) !important; border-top:none;}
+    .proc-step:first-child{ border-top:1px solid var(--panel-border) !important; border-radius:var(--radius-sm) var(--radius-sm) 0 0 !important;}
+    .proc-step:last-child{ border-radius:0 0 var(--radius-sm) var(--radius-sm) !important;}
+  }
+
+  .mini-steps{ display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:14px; margin:18px 0 0; }
+  .mini-step{ padding:16px; border-radius:14px; background:rgba(255,255,255,.02); border:1px dashed var(--panel-border); font-size:.83rem; }
+  .mini-step .tag-step{ font-family:var(--font-mono); font-size:.62rem; color:var(--magenta-soft); letter-spacing:.1em; display:block; margin-bottom:6px; }
+
+  .client-showcase{ display:grid; grid-template-columns: 1fr 1fr; gap:24px; align-items:start; margin-top:16px;}
+  .neon-card{ background:radial-gradient(120% 140% at 0% 0%, #1c0e2c, #0a0512 60%); border:1px solid var(--panel-border); border-radius:22px; padding:22px; box-shadow: 0 0 40px -18px var(--glow-magenta); }
+  .neon-card .nc-title{ font-size:.92rem; font-weight:700; margin-bottom:12px; color:var(--lilac); }
+  .nc-row{ display:flex; justify-content:space-between; align-items:center; padding:9px 0; border-bottom:1px solid rgba(168,85,247,.12); font-size:.82rem; }
+  .nc-row:last-child{ border-bottom:none; }
+  .nc-row span:first-child{ color:var(--ink-faint); }
+  .nc-row span:last-child{ color:var(--lilac); font-weight:600; }
+  .nc-btn{ margin-top:14px; width:100%; text-align:center; padding:12px; border-radius:12px; background:var(--grad-1); color:#fff; font-weight:700; font-size:.82rem; box-shadow:0 8px 26px -8px var(--glow-magenta); }
+  .client-menu-list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px; }
+  .client-menu-list li{ display:flex; gap:10px; align-items:flex-start; font-size:.82rem; padding:10px 12px; border-radius:12px; background:var(--panel); border:1px solid var(--panel-border); }
+  .client-menu-list b{ color:var(--ink); }
+  @media(max-width:760px){ .client-showcase{ grid-template-columns:1fr; } }
+
+  /* вложенный аккордеон внутри "Настроек" — использует те же .acc-item классы,
+     что и main.js уже умеет обрабатывать рекурсивно */
+  .acc-item.nested{ border-radius:12px; background:rgba(255,255,255,.015); }
+  .acc-item.nested .acc-trigger{ padding:14px 16px; font-size:.88rem; }
+  .acc-item.nested .acc-trigger h3{ font-size:.88rem; }
+  .acc-item.nested .acc-body-inner{ padding:0 16px 16px; }
+  .nested-wrap{ margin-top:8px; display:flex; flex-direction:column; gap:8px; }
+
+  .role-picker{ display:flex; flex-wrap:wrap; gap:10px; margin-bottom:28px; }
+  .role-btn{ font-family:var(--font-body); font-weight:700; font-size:.83rem; padding:11px 18px; border-radius:100px; cursor:pointer; background:var(--panel); color:var(--ink-dim); border:1px solid var(--panel-border); transition:.2s; }
+  .role-btn:hover{ color:var(--ink); border-color:var(--violet); }
+  .role-btn.active{ color:#fff; background:var(--grad-1); border-color:transparent; box-shadow:0 4px 22px -6px var(--glow-magenta); }
+  .role-panels{ position:relative; min-height:380px; }
+  .role-panel{ display:none; grid-template-columns: 1fr 1.15fr; gap:34px; align-items:center; }
+  .role-panel.active{ display:grid; }
+  .role-desc h3{ font-size:1.2rem; margin-bottom:10px; }
+  .role-desc ul{ margin:16px 0 0; padding:0; list-style:none; display:flex; flex-direction:column; gap:8px; }
+  .role-desc li{ font-size:.85rem; color:var(--ink-dim); display:flex; gap:8px; }
+  .role-desc li::before{ content:"◆"; color:var(--magenta-soft); font-size:.6rem; margin-top:.4em; }
+  .kb-grid{ display:grid; grid-template-columns:1fr 1fr; gap:9px; }
+  .kb-key{ background:rgba(255,255,255,.03); border:1px solid var(--panel-border); padding:14px 10px; border-radius:12px; text-align:center; font-size:.83rem; font-weight:600; color:var(--lilac); }
+  .kb-key.wide{ grid-column: 1 / -1; }
+  .kb-key.accent{ background:rgba(168,85,247,.14); border-color:var(--violet); color:#fff; }
+  .kb-key.ghost{ opacity:.35; text-decoration:line-through; }
+  @media(max-width:760px){ .role-panel.active{ display:flex; flex-direction:column; } }
+
+  .page-subnav{ position:sticky; top:65px; z-index:150; background:rgba(7,3,13,.85); backdrop-filter:blur(10px); border-bottom:1px solid var(--panel-border); }
+  .page-subnav .wrap{ display:flex; gap:8px; overflow-x:auto; padding:12px 24px; scrollbar-width:none; }
+  .page-subnav .wrap::-webkit-scrollbar{ display:none; }
+  .page-subnav a{ flex-shrink:0; font-size:.8rem; font-weight:600; color:var(--ink-dim); text-decoration:none; padding:8px 14px; border-radius:100px; border:1px solid var(--panel-border); background:var(--panel); white-space:nowrap; }
+  .page-subnav a:hover{ color:#fff; border-color:var(--violet); }
+</style>
+</head>
+<body>
+<div id="progress"><div id="progress-fill"></div></div>
+
+<header class="site-header">
+  <div class="nav-row">
+    <a href="/" class="brand"><span class="eye-wrap" style="width:30px;height:30px;"><img class="eye-img" src="/assets/aethel-eye-logo.png" alt="AETHEL"></span>AETHEL</a>
+    <nav class="nav-links" id="navLinks">
+      <a href="/">Главная</a>
+      <a href="/pricing/">Тарифы</a>
+      <a href="/cases/">Отзывы</a>
+      <a href="/guide/" class="current">Инструкция</a>
+      <a href="/faq/">FAQ</a>
+      <a href="/blog/">Блог</a>
+      <a href="https://t.me/AETHEL_Store_bot?start=ref_landing" target="_blank" rel="noopener" class="nav-cta">Подключить бота</a>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="Меню"><span></span></button>
+  </div>
+</header>
+
+<nav class="page-subnav">
+  <div class="wrap">
+    <a href="#quickstart">⚡ Быстрый старт</a>
+    <a href="#logic">Как устроена запись</a>
+    <a href="#find-menu">Найдите своё меню</a>
+    <a href="#sections">Справочник разделов</a>
+    <a href="/pricing/">Тарифы и версии →</a>
+  </div>
+</nav>
+
+<main>
+  <div class="wrap breadcrumbs"><a href="/">Главная</a><span class="sep">/</span>Инструкция по настройке</div>
+
+  <section style="padding-top:44px;">
+    <div class="wrap-text">
+      <div class="eyebrow">Уже подключили бота?</div>
+      <h1 class="article-h1" style="margin-top:14px;">Настройка занимает <span class="grad-text">около 5 минут</span></h1>
+      <p class="lead" style="font-size:1.05rem; margin-top:14px;">Это тексты, фото и пара переключателей. Ничего заучивать не нужно — просто идите по шагам ниже. Ещё не подключили своего бота? Сначала загляните в <a href="/connect/" style="color:var(--violet-soft)">инструкцию по подключению</a>.</p>
+    </div>
+  </section>
+
+  <!-- QUICK START -->
+  <section id="quickstart" style="padding-top:0;">
+    <div class="wrap-text">
+      <div class="head-block">
+        <div class="eyebrow">⚡ Начните здесь</div>
+        <h2>Быстрый старт: от пустой панели до первой записи</h2>
+        <p class="lead">Девять коротких шагов — пройдите их по порядку прямо сейчас. В конце у вас будет полностью рабочий бот и понимание, как всё устроено.</p>
+      </div>
+
+      <div class="timeline">
+
+        <div class="tl-item">
+          <div class="tl-node">1</div>
+          <div class="tl-card">
+            <h4>Откройте панель управления</h4>
+            <p>В Telegram у бота отправьте команду <span class="var">/admin</span> — откроется ваша панель. (Команда <span class="var">/start</span> вместо этого показывает бота глазами клиента — пригодится на шаге 7.)</p>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-node">2</div>
+          <div class="tl-card">
+            <span class="tl-where">👤 Профиль → ✏️ Настроить профиль</span>
+            <h4>Заполните свой профиль</h4>
+            <p>Имя, фото, адрес и короткое описание — это первое, что видит клиент, выбирая мастера. Пары предложений о вашем опыте достаточно, доработать можно позже.</p>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-node">3</div>
+          <div class="tl-card">
+            <span class="tl-where">👤 Профиль → 🏦 Реквизиты для предоплаты</span>
+            <h4>Укажите, куда клиент переводит предоплату</h4>
+            <p>Номер телефона и банк. Это именно то, что клиент увидит при оформлении записи, если вы не подключили отдельную платёжную ссылку или банковский эквайринг.</p>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-node">4</div>
+          <div class="tl-card">
+            <span class="tl-where">⚙️ Настройки → 🎨 Оформление → 👋 Приветствие</span>
+            <h4>Напишите приветственное сообщение</h4>
+            <p>Текст и фото, которые клиент видит в первую секунду, открыв бота. Достаточно пары тёплых фраз о студии и короткого приглашения выбрать действие.</p>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-node">5</div>
+          <div class="tl-card">
+            <span class="tl-where">✂️ Услуги → ➕ Добавить услугу</span>
+            <h4>Добавьте хотя бы одну услугу</h4>
+            <p>Название, цена, длительность в минутах и сумма предоплаты (можно 0₽). Остальные услуги легко добавить позже — для старта хватит одной.</p>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-node">6</div>
+          <div class="tl-card">
+            <span class="tl-where">🗓 Расписание → ⚙️ Рабочий график → ➕ Добавить рабочие дни</span>
+            <h4>Составьте первое расписание</h4>
+            <p>Выберите месяц → отметьте в календаре рабочие дни → задайте одно время начала и конца рабочего дня — оно применится сразу ко всем отмеченным дням.</p>
+            <div class="callout"><div class="callout-title">💡 Важно</div><p style="margin:0;">Окна для записи настраивать не нужно — бот сам «нарежет» рабочий день на промежутки под длительность каждой услуги. Ваша задача — только дни и общее рабочее время.</p></div>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-node">7</div>
+          <div class="tl-card">
+            <h4>Посмотрите на бота глазами клиента</h4>
+            <p>Отправьте боту <span class="var">/start</span> — увидите своё приветствие. Нажмите «📅 Запись на сеанс», найдите свой профиль, выберите услугу и попробуйте записаться сами к себе — это займёт минуту и сразу покажет, чего ожидать вашим настоящим клиентам.</p>
+            <div class="client-showcase">
+              <div class="neon-card">
+                <div class="nc-title">✦ Что увидит клиент</div>
+                <div class="nc-row"><span>Дата</span><span>19.08.2026</span></div>
+                <div class="nc-row"><span>Время</span><span>10:00–13:30</span></div>
+                <div class="nc-row"><span>Услуга</span><span>ваша услуга</span></div>
+                <div class="nc-row"><span>Статус</span><span>⏳ Ожидает оплаты</span></div>
+                <div class="nc-btn">Оплатить →</div>
+              </div>
+              <ul class="client-menu-list">
+                <li>📅 <div><b>Запись на сеанс</b> — выбор услуги, даты и времени</div></li>
+                <li>📌 <div><b>Моя запись</b> — просмотр, отмена, перенос</div></li>
+                <li>📋 <div><b>Список услуг</b> — каталог с фото</div></li>
+                <li>🗺️ <div><b>Как дойти</b> — адрес и карта</div></li>
+              </ul>
+            </div>
+            <p style="margin-top:14px;">Дойдите до конца — отправьте скриншот оплаты (даже произвольный, это тест) и подтвердите тестовую запись.</p>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-node">8</div>
+          <div class="tl-card">
+            <span class="tl-where">/admin → 📋 Записи → 👀 Посмотреть записи</span>
+            <h4>Вернитесь в панель и найдите свою тестовую запись</h4>
+            <p>Вы увидите её статус (⏳ ожидает подтверждения). Подтвердите или отмените запись — так вы увидите оба сценария. Затем откройте <span class="var">🗓 Расписание → 👀 Посмотреть расписание</span> и проверьте, что тестовое окно снова свободно после отмены.</p>
+          </div>
+        </div>
+
+        <div class="tl-item final">
+          <div class="tl-node">✓</div>
+          <div class="tl-card">
+            <h4>Готово — базовый цикл понятен!</h4>
+            <p>Профиль, услуга и расписание настроены, а вы своими глазами увидели весь путь клиента — от записи до подтверждения. Этого достаточно, чтобы бот уже сегодня начал принимать реальных клиентов.</p>
+            <p>Всё остальное — рассылки, напоминания, статистика, дополнительные мастера — не обязательно настраивать сразу. Открывайте нужный раздел в справочнике ниже по мере необходимости.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- LOGIC -->
+  <section id="logic">
+    <div class="wrap-text">
+      <div class="head-block">
+        <div class="eyebrow">Полезно понимать</div>
+        <h2>Как устроена запись изнутри</h2>
+        <p class="lead">С момента, когда клиент нажимает «Записаться», до отметки «Выполнена» бот проходит через понятную последовательность шагов.</p>
+      </div>
+      <div class="process">
+        <div class="proc-step"><span class="proc-ic">🗓</span><h5>Выбор времени</h5><span>Клиент выбирает услугу и окно</span></div>
+        <div class="proc-step"><span class="proc-ic">💳</span><h5>Оплата</h5><span>Скриншот в течение 15 минут</span></div>
+        <div class="proc-step"><span class="proc-ic">🔔</span><h5>Уведомление вам</h5><span>Закрепляется в чате, можно добавить заметку</span></div>
+        <div class="proc-step"><span class="proc-ic">✅</span><h5>Подтверждение</h5><span>Вы подтверждаете или отклоняете</span></div>
+        <div class="proc-step"><span class="proc-ic">⏰</span><h5>Напоминания</h5><span>Клиенту — за 2 дня, день и 2 часа</span></div>
+        <div class="proc-step"><span class="proc-ic">🎉</span><h5>Выполнена</h5><span>Бот сам меняет статус после сеанса</span></div>
+      </div>
+      <div class="callout" style="margin-top:26px;">
+        <div class="callout-title">📝 Заметки и комментарий клиента</div>
+        <p style="margin:0;">Прямо из уведомления о новой записи вы можете добавить свою заметку — к записи или к клиенту, она останется в карточке для вас. Если клиент оставил комментарий при записи, вы увидите его там же — рядом с датой, временем и услугой.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ROLE FINDER -->
+  <section id="find-menu">
+    <div class="wrap">
+      <div class="head-block center" style="margin-left:auto; margin-right:auto;">
+        <div class="eyebrow">Ориентир · интерактивно</div>
+        <h2>Найдите своё меню</h2>
+        <p class="lead">Выберите свою роль — покажем, какую именно клавиатуру вы увидите после <span class="var">/admin</span>.</p>
+      </div>
+
+      <div class="role-picker" role="tablist" aria-label="Выбор роли">
+        <button class="role-btn active" data-role="solo">💗 Личный бот</button>
+        <button class="role-btn" data-role="studio-admin">Студия · Админ</button>
+        <button class="role-btn" data-role="studio-master">Студия · Мастер</button>
+        <button class="role-btn" data-role="biz-admin">Бизнес · Админ</button>
+        <button class="role-btn" data-role="biz-master">Бизнес · Мастер</button>
+      </div>
+
+      <div class="role-panels">
+        <div class="role-panel active" data-role-panel="solo">
+          <div class="role-desc">
+            <h3>Вы — единственный мастер</h3>
+            <p>Вы одновременно и владелец бота, и специалист. Доступны абсолютно все разделы вашего тарифа.</p>
+            <ul><li>Полный доступ к записям, расписанию и услугам</li><li>Настройка бота — только вы</li><li>Раздел «Мастера» не понадобится — вы один</li></ul>
+          </div>
+          <div class="phone">
+            <div class="phone-head"><span>ADMIN PANEL</span><span>●●●</span></div>
+            <div class="kb-grid">
+              <div class="kb-key">📋 Записи</div><div class="kb-key">🗓 Расписание</div>
+              <div class="kb-key">✂️ Услуги</div><div class="kb-key">👥 Клиенты</div>
+              <div class="kb-key">👤 Профиль</div><div class="kb-key">👩‍🎨 Мастера</div>
+              <div class="kb-key">📊 Статистика</div><div class="kb-key">⚙️ Настройки</div>
+              <div class="kb-key wide accent">📖 Инструкция</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="role-panel" data-role-panel="studio-admin">
+          <div class="role-desc">
+            <h3>Главный администратор студии</h3>
+            <p>Вы — один из мастеров студии, но с расширенными правами: настраиваете бота и управляете списком мастеров.</p>
+            <ul><li>Полный доступ ко всем разделам, включая «Мастера» и «Настройки»</li><li>Ведёте свои личные записи и расписание, как обычный мастер</li><li>Добавляете и удаляете других мастеров студии</li></ul>
+          </div>
+          <div class="phone">
+            <div class="phone-head"><span>ADMIN PANEL</span><span>●●●</span></div>
+            <div class="kb-grid">
+              <div class="kb-key">📋 Записи</div><div class="kb-key">🗓 Расписание</div>
+              <div class="kb-key">✂️ Услуги</div><div class="kb-key">👥 Клиенты</div>
+              <div class="kb-key">👤 Профиль</div><div class="kb-key">👩‍🎨 Мастера</div>
+              <div class="kb-key">📊 Статистика</div><div class="kb-key">⚙️ Настройки</div>
+              <div class="kb-key wide accent">📖 Инструкция</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="role-panel" data-role-panel="studio-master">
+          <div class="role-desc">
+            <h3>Обычный мастер в студии</h3>
+            <p>Вы полностью управляете своими записями, расписанием и услугами — но не настраиваете бота целиком.</p>
+            <ul><li>Нет доступа к разделам «Мастера» и «Настройки»</li><li>Их видит только главный администратор студии</li><li>Всё остальное — в вашем полном распоряжении</li></ul>
+          </div>
+          <div class="phone">
+            <div class="phone-head"><span>ADMIN PANEL</span><span>●●●</span></div>
+            <div class="kb-grid">
+              <div class="kb-key">📋 Записи</div><div class="kb-key">🗓 Расписание</div>
+              <div class="kb-key">✂️ Услуги</div><div class="kb-key">👥 Клиенты</div>
+              <div class="kb-key">👤 Профиль</div><div class="kb-key">📊 Статистика</div>
+              <div class="kb-key ghost">👩‍🎨 Мастера</div><div class="kb-key ghost">⚙️ Настройки</div>
+              <div class="kb-key wide accent">📖 Инструкция</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="role-panel" data-role-panel="biz-admin">
+          <div class="role-desc">
+            <h3>Главный администратор бизнеса</h3>
+            <p>Вы не ведёте расписание напрямую — сначала выбираете мастера, которым хотите управлять.</p>
+            <ul><li>После выбора мастера открывается его личное меню: записи, расписание, услуги, профиль, статистика</li><li>«Клиенты» и «Мастера» настраиваются централизованно — из главного меню</li></ul>
+          </div>
+          <div class="phone">
+            <div class="phone-head"><span>ADMIN PANEL</span><span>●●●</span></div>
+            <div class="kb-grid">
+              <div class="kb-key wide accent">👤 Выбрать мастера</div>
+              <div class="kb-key">👥 Клиенты</div><div class="kb-key">👩‍🎨 Мастера</div>
+              <div class="kb-key">⚙️ Настройки</div><div class="kb-key">📖 Инструкция</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="role-panel" data-role-panel="biz-master">
+          <div class="role-desc">
+            <h3>Обычный мастер в бизнесе</h3>
+            <p>Вы можете только просматривать свои записи, расписание и статистику.</p>
+            <ul><li>Изменение расписания, добавление услуг и рассылки делает главный администратор</li><li>Минимальное меню — только то, что нужно для просмотра</li></ul>
+          </div>
+          <div class="phone">
+            <div class="phone-head"><span>ADMIN PANEL</span><span>●●●</span></div>
+            <div class="kb-grid">
+              <div class="kb-key wide">📋 Записи и расписание</div>
+              <div class="kb-key wide">📊 Статистика</div>
+              <div class="kb-key wide accent">👤 Мой профиль</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- FULL REFERENCE -->
+  <section id="sections">
+    <div class="wrap-text">
+      <div class="head-block">
+        <div class="eyebrow">Справочник · открывайте по необходимости</div>
+        <h2>Все разделы панели подробно</h2>
+        <p class="lead">Базовые шаги вы уже прошли в «Быстром старте». Здесь — полное описание каждой кнопки на случай, если понадобится что-то донастроить.</p>
+      </div>
+
+      <div class="acc">
+
+        <article class="acc-item">
+          <button class="acc-trigger"><h3>📋 Записи</h3><span class="chev">✕</span></button>
+          <div class="acc-body"><div class="acc-body-inner">
+            <p><b>👀 Посмотреть записи</b> — список за последние 7 дней по статусам: <span class="var">⏳ ожидает подтверждения</span>, <span class="var">✅ подтверждена</span>, <span class="var">❌ отменена</span>, <span class="var">🎉 выполнена</span> (бот меняет статус сам после сеанса).</p>
+            <p><b>✍️ Записать клиента вручную</b> — для клиента без Telegram. Запись создаётся сразу подтверждённой, без предоплаты.</p>
+            <p><b>❌ Отменить запись</b> — с уведомлением клиента и, если нужно, возвратом предоплаты.</p>
+          </div></div>
+        </article>
+
+        <article class="acc-item">
+          <button class="acc-trigger"><h3>🗓 Расписание</h3><span class="chev">✕</span></button>
+          <div class="acc-body"><div class="acc-body-inner">
+            <p><b>👀 Посмотреть расписание</b> — все рабочие дни, часы и перерывы.</p>
+            <p><b>⭐ Свободные окна</b> — реально доступные промежутки с учётом длительности услуг.</p>
+            <p><b>⚙️ Рабочий график</b> — ➕ добавить дни (время применяется сразу ко всем отмеченным), ⏰ изменить часы (день с записями можно только продлить), 🗑 убрать дни без записей.</p>
+            <p><b>🚫 Закрыть время</b> — 📆 месяц целиком, 📅 отдельные дни, ⏰ промежуток внутри дня.</p>
+            <p><b>☕ Перерывы</b> — ➕ на день, 🔁 постоянный <span class="badge badge-pro">PRO+</span> (индивидуальный на день всегда важнее), ✏️ изменить.</p>
+            <div class="callout"><div class="callout-title">🧠 Как бот считает окна</div><p style="margin:0;">Он нарезает день под длительность выбранной услуги — без ручной настройки слотов и без «дыр» в расписании.</p></div>
+          </div></div>
+        </article>
+
+        <article class="acc-item">
+          <button class="acc-trigger"><h3>✂️ Услуги</h3><span class="chev">✕</span></button>
+          <div class="acc-body"><div class="acc-body-inner">
+            <p><b>➕ Добавить услугу</b> — название, цена, длительность, предоплата, описание, до 10 фото.</p>
+            <p><b>✏️ Изменить</b> — любые параметры, включая «Свободную запись» (см. ниже).</p>
+            <p><b>🗑 Удалить</b> — вместе со всеми фото.</p>
+            <div class="callout">
+              <div class="callout-title">✨ Как включить «Свободную запись» для услуги</div>
+              <p style="margin-bottom:14px;">Опция находится внутри редактирования конкретной услуги и работает только для неё.</p>
+              <div class="mini-steps">
+                <div class="mini-step"><span class="tag-step">ШАГ 1</span>Откройте <b style="color:var(--ink)">✂️ Услуги → ✏️ Редактировать</b></div>
+                <div class="mini-step"><span class="tag-step">ШАГ 2</span>Выберите нужную услугу</div>
+                <div class="mini-step"><span class="tag-step">ШАГ 3</span><b style="color:var(--ink)">«Свободная запись: ВЫКЛ»</b> → <b style="color:var(--ok)">«Включить»</b></div>
+              </div>
+            </div>
+          </div></div>
+        </article>
+
+        <article class="acc-item">
+          <button class="acc-trigger"><h3>👥 Клиенты</h3><span class="chev">✕</span></button>
+          <div class="acc-body"><div class="acc-body-inner">
+            <p><b>📣 Рассылка</b> <span class="badge badge-pro">PRO+</span> — по категориям: все / постоянные / спящие / ушедшие / новые / вручную. HTML, премиум-эмодзи, кнопки вида <span class="var">[Текст = ссылка] цвет</span>, отчёт о доставке.</p>
+            <p><b>💬 Сообщение клиенту</b> — личное сообщение напрямую из бота.</p>
+            <p><b>🚫 Чёрный список</b> — заблокировать по @username / телефону / ID / из списка. <span class="badge badge-biz">БИЗНЕС+ПЛАТЕЖИ</span> — можно забанить от записи к конкретному мастеру.</p>
+          </div></div>
+        </article>
+
+        <article class="acc-item">
+          <button class="acc-trigger"><h3>👤 Профиль</h3><span class="chev">✕</span></button>
+          <div class="acc-body"><div class="acc-body-inner">
+            <p><b>✏️ Настроить профиль</b> — имя, фото, адрес, описание (HTML/эмодзи <span class="badge badge-pro">PRO+</span>).</p>
+            <p><b>🏦 Реквизиты</b> — телефон и банк для предоплаты.</p>
+            <p><b>🔧 «Требуется снятие»</b> <span class="badge badge-max">MAX</span> — добавляет 15 минут к услуге при отметке клиентом.</p>
+          </div></div>
+        </article>
+
+        <article class="acc-item">
+          <button class="acc-trigger"><h3>👩‍🎨 Мастера <span style="font-size:.6em;color:var(--ink-faint);font-family:var(--font-mono);font-weight:400;">(только главный администратор)</span></h3><span class="chev">✕</span></button>
+          <div class="acc-body"><div class="acc-body-inner">
+            <p><b>➕ Добавить мастера</b> — Telegram ID (мастер узнаёт его командой <span class="var">/myid</span>), адрес, имя, описание, телефон и банк.</p>
+            <p><b>🗑 Удалить мастера</b> — ⚠️ вместе с ним удаляются все его записи, расписание и услуги — необратимо.</p>
+          </div></div>
+        </article>
+
+        <article class="acc-item">
+          <button class="acc-trigger"><h3>📊 Статистика <span class="badge badge-max" style="margin-left:8px;">MAX</span></h3><span class="chev">✕</span></button>
+          <div class="acc-body"><div class="acc-body-inner">
+            <p>PDF-отчёт: графики дохода, клиенты по категориям, показатель лояльности, маркетинговые рекомендации и прогноз дохода на ближайшие месяцы.</p>
+            <div class="callout"><div class="callout-title">⏱ Важно</div><p style="margin:0;">Формирование отчёта занимает до 3 минут — не нажимайте кнопку повторно.</p></div>
+          </div></div>
+        </article>
+
+        <article class="acc-item">
+          <button class="acc-trigger"><h3>⚙️ Настройки <span style="font-size:.6em;color:var(--ink-faint);font-family:var(--font-mono);font-weight:400;">(только главный администратор)</span></h3><span class="chev">✕</span></button>
+          <div class="acc-body"><div class="acc-body-inner">
+            <p style="margin-bottom:16px;">Разбиты на разделы — нажмите на нужный.</p>
+            <div class="nested-wrap">
+
+              <article class="acc-item nested">
+                <button class="acc-trigger"><h3>🎨 Оформление и информация</h3><span class="chev">✕</span></button>
+                <div class="acc-body"><div class="acc-body-inner">
+                  <p>👋 Приветствие · ℹ️ «Важно» <span class="badge badge-pro">PRO+</span> · 💅 оформление «Услуги» · ⭐️ ссылка на отзывы <span class="badge badge-pro">PRO+</span> · 📍 локация и «Как дойти» · 💬 комментарий к записи.</p>
+                </div></div>
+              </article>
+
+              <article class="acc-item nested">
+                <button class="acc-trigger"><h3>📅 Правила записи</h3><span class="chev">✕</span></button>
+                <div class="acc-body"><div class="acc-body-inner">
+                  <p>📝 лимит активных записей · ⏳ за сколько часов можно записаться · 📆 срок записи вперёд · ↩️ отмена/перенос · ✅ автоподтверждение без предоплаты <span class="badge badge-pro">PRO+</span> (недоступно в <span class="badge badge-biz">БИЗНЕС+ПЛАТЕЖИ</span>).</p>
+                </div></div>
+              </article>
+
+              <article class="acc-item nested">
+                <button class="acc-trigger"><h3>🔔 Уведомления</h3><span class="chev">✕</span></button>
+                <div class="acc-body"><div class="acc-body-inner">
+                  <p>⏰ напоминания <span class="badge badge-pro">PRO+</span> с подстановками <span class="var">{мастер}</span> <span class="var">{дата}</span> <span class="var">{время}</span> <span class="var">{услуга}</span> <span class="var">{стоимость}</span> <span class="var">{адрес}</span> · ✅ сообщение после визита <span class="badge badge-max">MAX</span>.</p>
+                </div></div>
+              </article>
+
+              <article class="acc-item nested">
+                <button class="acc-trigger"><h3>💳 Платежи <span class="badge badge-biz" style="margin-left:6px;">БИЗНЕС+ПЛАТЕЖИ</span></h3><span class="chev">✕</span></button>
+                <div class="acc-body"><div class="acc-body-inner">
+                  <p>Т-Банк эквайринг · свой текст при запросе оплаты · время на оплату.</p>
+                </div></div>
+              </article>
+
+              <article class="acc-item nested">
+                <button class="acc-trigger"><h3>⚙️ Системные и доп. настройки</h3><span class="chev">✕</span></button>
+                <div class="acc-body"><div class="acc-body-inner">
+                  <p>🕐 часовой пояс · 🎯 модель отображения окон (автоматическая рекомендуется) · 💳 платёжная ссылка (без Т-Банка) · 📋 пользовательские соглашения <span class="badge badge-biz">БИЗНЕС+ПЛАТЕЖИ</span>.</p>
+                </div></div>
+              </article>
+
+            </div>
+          </div></div>
+        </article>
+
+        <article class="acc-item">
+          <button class="acc-trigger"><h3>📖 Инструкция</h3><span class="chev">✕</span></button>
+          <div class="acc-body"><div class="acc-body-inner">
+            <p style="margin:0;">Открывает эту страницу. Если у вас есть мастера в студии или бизнесе — пришлите им ту же ссылку, добавляя их в бота.</p>
+          </div></div>
+        </article>
+
+      </div>
+
+      <div class="callout" style="margin-top:30px; text-align:center;">
+        <p style="margin:0;">Хотите узнать, какие функции доступны на вашем тарифе? Смотрите <a href="/pricing/" style="color:var(--violet-soft)">полное сравнение тарифов и версий бота →</a></p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap-text">
+      <div class="cta-banner">
+        <h2>Остались вопросы по настройке?</h2>
+        <p>Поддержка поможет разобраться с любым разделом панели.</p>
+        <div class="hero-ctas">
+          <a href="https://t.me/AETHEL_support" target="_blank" rel="noopener" class="btn btn-primary">💬 Написать в поддержку</a>
+          <a href="/faq/" class="btn btn-ghost">Частые вопросы →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="eye-wrap" style="width:38px;height:38px;"><img class="eye-img" src="/assets/aethel-eye-logo.png" alt="AETHEL"></div>
+        <p>Telegram-бот для записи клиентов. Готовая система для мастеров и студий.</p>
+        <div class="footer-social">
+          <a href="https://t.me/AETHEL_bots" target="_blank" rel="noopener">📢 Канал</a>
+          <a href="https://t.me/AETHEL_reviews" target="_blank" rel="noopener">⭐ Отзывы</a>
+          <a href="https://t.me/AETHEL_support" target="_blank" rel="noopener">💬 Поддержка</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Продукт</h4>
+        <a href="/pricing/">Тарифы и версии</a>
+        <a href="/guide/">Как настроить бота</a>
+        <a href="/connect/">Как подключить бота</a>
+        <a href="/faq/">Вопрос-ответ</a>
+      </div>
+      <div class="footer-col">
+        <h4>Компания</h4>
+        <a href="/cases/">Отзывы и кейсы</a>
+        <a href="/blog/">Блог для мастеров</a>
+        <a href="https://t.me/AETHEL_support" target="_blank" rel="noopener">Поддержка</a>
+        <a href="mailto:aethel-botstore@mail.ru">Email</a>
+      </div>
+      <div class="footer-col">
+        <h4>Документы</h4>
+        <a href="/documents/offer.html">Договор-оферта</a>
+        <a href="/documents/privacy.html">Политика конфиденциальности</a>
+        <a href="/documents/terms.html">Обработка данных</a>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2025–2026 AETHEL. Все права защищены.</div>
+  </div>
+</footer>
+
+<div class="floaters"><button class="fbtn" id="toTop" aria-label="Наверх">↑</button></div>
+<nav class="mobile-tabbar" aria-label="Быстрая навигация">
+  <div class="tb-row">
+    <a href="/" class=""><span class="tb-ic">🏠</span><span>Главная</span></a>
+    <a href="/pricing/" class=""><span class="tb-ic">💳</span><span>Тарифы</span></a>
+    <a href="/guide/" class="current"><span class="tb-ic">📖</span><span>Инструкция</span></a>
+    <a href="/connect/" class=""><span class="tb-ic">🔌</span><span>Подключить</span></a>
+    <a href="https://t.me/AETHEL_Store_bot?start=ref_7133271669" target="_blank" rel="noopener" class="tb-cta"><span class="tb-ic">🚀</span><span>Бот</span></a>
+  </div>
+</nav>
+
+<script src="/main.js" defer></script>
+<script>
+  // Переключатель ролей ("Найдите своё меню") — уникален для этой страницы,
+  // поэтому не выносим в общий main.js.
+  (function(){
+    var roleBtns = document.querySelectorAll('.role-btn');
+    var rolePanels = document.querySelectorAll('.role-panel');
+    roleBtns.forEach(function(btn){
+      btn.addEventListener('click', function(){
+        roleBtns.forEach(function(b){ b.classList.remove('active'); });
+        btn.classList.add('active');
+        var role = btn.dataset.role;
+        rolePanels.forEach(function(p){ p.classList.toggle('active', p.dataset.rolePanel === role); });
+      });
+    });
+  })();
+</script>
+</body>
+</html>

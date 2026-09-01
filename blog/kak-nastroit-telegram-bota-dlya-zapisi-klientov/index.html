@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!--
+  ШАБЛОН СТАТЬИ БЛОГА AETHEL
+  ==========================
+  Чтобы опубликовать новую статью:
+  1. Скопируйте всю папку /blog/kak-nastroit-telegram-bota-dlya-zapisi-klientov/
+     в новую папку с адресом статьи латиницей через дефис,
+     например /blog/kak-vybrat-tarif-bota/
+  2. Замените в <head>: title, meta description, meta keywords, canonical,
+     og:url, og:title, og:description и JSON-LD Article (см. ниже).
+  3. Замените в <body>: хлебные крошки, тег статьи, заголовок H1, дату,
+     содержание (toc-inline) и сам текст в <div class="article-body">.
+  4. Добавьте карточку новой статьи в /blog/index.html (блок .blog-grid)
+     и строку в /sitemap.xml.
+  Дизайн и структура (шапка, подвал, стили) меняться не должны —
+  просто оставляйте их как есть и правьте только содержимое.
+-->
+
+<title>Как настроить Telegram-бота для записи клиентов: пошаговый разбор — AETHEL</title>
+<meta name="description" content="Пошаговый разбор: как выбрать версию бота, заполнить профиль, добавить услугу и составить расписание — от подключения до первой записи клиента.">
+<meta name="keywords" content="как настроить телеграм бота для записи, настройка бота для мастера, инструкция телеграм бот для записи клиентов">
+<link rel="canonical" href="https://www.aethelbotstore.ru/blog/kak-nastroit-telegram-bota-dlya-zapisi-klientov/">
+<meta name="robots" content="index, follow">
+<link rel="icon" type="image/png" href="/assets/aethel-eye-logo.png">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.aethelbotstore.ru/blog/kak-nastroit-telegram-bota-dlya-zapisi-klientov/">
+<meta property="og:title" content="Как настроить Telegram-бота для записи клиентов: пошаговый разбор">
+<meta property="og:description" content="От выбора версии бота до первой тестовой записи — что нужно сделать и в каком порядке.">
+<meta property="og:image" content="https://www.aethelbotstore.ru/assets/aethel-eye-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800;900&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Как настроить Telegram-бота для записи клиентов: пошаговый разбор",
+  "description": "От выбора версии бота до первой тестовой записи — что нужно сделать и в каком порядке.",
+  "image": "https://www.aethelbotstore.ru/assets/aethel-eye-logo.png",
+  "author": {"@type":"Organization","name":"AETHEL"},
+  "publisher": {"@type":"Organization","name":"AETHEL","logo":{"@type":"ImageObject","url":"https://www.aethelbotstore.ru/assets/aethel-eye-logo.png"}},
+  "datePublished": "2026-08-01",
+  "dateModified": "2026-08-26",
+  "mainEntityOfPage": "https://www.aethelbotstore.ru/blog/kak-nastroit-telegram-bota-dlya-zapisi-klientov/"
+}
+</script>
+</head>
+<body>
+<div id="progress"><div id="progress-fill"></div></div>
+
+<header class="site-header">
+  <div class="nav-row">
+    <a href="/" class="brand"><span class="eye-wrap" style="width:30px;height:30px;"><img class="eye-img" src="/assets/aethel-eye-logo.png" alt="AETHEL"></span>AETHEL</a>
+    <nav class="nav-links" id="navLinks">
+      <a href="/">Главная</a>
+      <a href="/pricing/">Тарифы</a>
+      <a href="/cases/">Отзывы</a>
+      <a href="/guide/">Инструкция</a>
+      <a href="/faq/">FAQ</a>
+      <a href="/blog/" class="current">Блог</a>
+      <a href="https://t.me/AETHEL_Store_bot?start=ref_landing" target="_blank" rel="noopener" class="nav-cta">Подключить бота</a>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="Меню"><span></span></button>
+  </div>
+</header>
+
+<main>
+  <div class="wrap breadcrumbs"><a href="/">Главная</a><span class="sep">/</span><a href="/blog/">Блог</a><span class="sep">/</span>Как настроить бота для записи</div>
+
+  <article style="padding-top:44px;">
+    <div class="wrap-text">
+      <span class="article-hero-tag">Настройка · 7 мин чтения</span>
+      <h1 class="article-h1">Как настроить Telegram-бота для записи клиентов: пошаговый разбор</h1>
+      <div class="article-meta"><span>Обновлено: 26 августа 2026</span><span>·</span><span>AETHEL</span></div>
+
+      <div class="toc-inline">
+        <p>Содержание</p>
+        <ol>
+          <li><a href="#vybor">1. Выбор версии бота</a></li>
+          <li><a href="#profil">2. Заполнение профиля и реквизитов</a></li>
+          <li><a href="#usluga">3. Добавление услуги</a></li>
+          <li><a href="#raspisanie">4. Составление расписания</a></li>
+          <li><a href="#test">5. Тестовая запись глазами клиента</a></li>
+          <li><a href="#dальше">6. Что настроить дальше</a></li>
+        </ol>
+      </div>
+
+      <div class="article-body">
+        <p>Если вы впервые открываете админ-панель Telegram-бота для записи клиентов, задача может показаться сложнее, чем есть на самом деле. На практике весь путь от пустой панели до первой рабочей записи занимает около <strong>5–10 минут</strong> и состоит всего из нескольких шагов.</p>
+
+        <h2 id="vybor">1. Выбор версии бота</h2>
+        <p>Прежде чем настраивать что-либо, определитесь с форматом работы. Если вы единственный мастер — подойдёт версия «Личный». Если у вас несколько специалистов в одной студии, где каждый ведёт свою запись сам, — версия «Студия». Если вы управляете салоном и хотите централизованно контролировать расписание всех мастеров — «Бизнес», при необходимости с автоматическим приёмом платежей через банк.</p>
+        <p>Подробное сравнение версий и тарифов — на <a href="/pricing/">странице тарифов AETHEL</a>.</p>
+
+        <h2 id="profil">2. Заполнение профиля и реквизитов</h2>
+        <p>Первое, что видит клиент, выбирая мастера, — это профиль: имя, фото, адрес и короткое описание опыта. Не нужно писать сочинение — двух-трёх предложений о специализации достаточно для старта, доработать всегда можно позже.</p>
+        <p>Следом стоит указать реквизиты для предоплаты — номер телефона и банк, куда клиент будет переводить бронь. Это именно то, что клиент увидит на экране оплаты, если не подключена отдельная платёжная ссылка или банковский эквайринг.</p>
+
+        <h2 id="usluga">3. Добавление услуги</h2>
+        <p>Для теста достаточно одной услуги: название, цена, длительность в минутах и сумма предоплаты (можно поставить 0 ₽, если предоплата не нужна). Остальные услуги добавляются точно так же — в любой момент.</p>
+
+        <h2 id="raspisanie">4. Составление расписания</h2>
+        <p>Здесь чаще всего теряются новички, хотя логика простая: выберите месяц, отметьте в календаре рабочие дни и укажите одно общее время начала и конца рабочего дня — оно применится сразу ко всем отмеченным дням.</p>
+        <p><strong>Важный момент:</strong> вручную нарезать окна для записи не нужно. Хорошие боты, включая AETHEL, сами разбивают рабочий день на промежутки под длительность конкретной услуги — так в графике не остаётся неудобных «дыр» между записями.</p>
+
+        <h2 id="test">5. Тестовая запись глазами клиента</h2>
+        <p>После того как профиль, услуга и расписание готовы, стоит один раз пройти путь клиента самостоятельно: открыть бота командой <code>/start</code>, нажать «Записаться», выбрать услугу и время, дойти до экрана оплаты. Это лучший способ убедиться, что всё выглядит именно так, как задумано, прежде чем делиться ссылкой с реальными клиентами.</p>
+
+        <h2 id="dальше">6. Что настроить дальше</h2>
+        <p>Базового набора — профиль, одна услуга, расписание — достаточно, чтобы бот уже начал принимать записи. Остальные функции — рассылки клиентам, кастомные напоминания, статистика с прогнозом дохода — можно подключать по мере роста: они не блокируют запуск.</p>
+        <p>Полный разбор каждой кнопки панели — в <a href="/guide/">инструкции по настройке AETHEL</a>.</p>
+      </div>
+
+      <div class="author-box">
+        <div class="av"></div>
+        <div><b>Команда AETHEL</b><p>Разработчики Telegram-ботов для записи клиентов в бьюти-сфере и сфере услуг.</p></div>
+      </div>
+    </div>
+  </article>
+
+  <section class="related-posts">
+    <div class="wrap">
+      <div class="head-block"><h2 style="font-size:1.4rem;">Читайте также</h2></div>
+      <div class="blog-grid">
+        <a class="blog-card" href="/blog/telegram-bot-ili-crm-dlya-zapisi/">
+          <div class="cat">Сравнение</div>
+          <h3>Telegram-бот, CRM или Excel: что выбрать для записи клиентов</h3>
+          <p>Сравниваем три способа вести запись клиентов по деньгам и удобству.</p>
+          <div class="meta"><span>6 мин чтения</span><span class="read">Читать →</span></div>
+        </a>
+        <a class="blog-card" href="/blog/kak-sokratit-neyavki-klientov/">
+          <div class="cat">Практика</div>
+          <h3>Как сократить неявки клиентов: работает ли предоплата</h3>
+          <p>Разбираем, какие механики бота реально снижают процент неявок.</p>
+          <div class="meta"><span>6 мин чтения</span><span class="read">Читать →</span></div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap-text">
+      <div class="cta-banner">
+        <h2>Готовы попробовать?</h2>
+        <p>Подключите бота бесплатно и настройте его за 5 минут по этому же алгоритму.</p>
+        <div class="hero-ctas">
+          <a href="https://t.me/AETHEL_Store_bot?start=ref_7133271669" target="_blank" rel="noopener" class="btn btn-primary">🚀 Попробовать бесплатно</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="eye-wrap" style="width:38px;height:38px;"><img class="eye-img" src="/assets/aethel-eye-logo.png" alt="AETHEL"></div>
+        <p>Telegram-бот для записи клиентов. Готовая система для мастеров и студий.</p>
+        <div class="footer-social">
+          <a href="https://t.me/AETHEL_bots" target="_blank" rel="noopener">📢 Канал</a>
+          <a href="https://t.me/AETHEL_reviews" target="_blank" rel="noopener">⭐ Отзывы</a>
+          <a href="https://t.me/AETHEL_support" target="_blank" rel="noopener">💬 Поддержка</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Продукт</h4>
+        <a href="/pricing/">Тарифы и версии</a>
+        <a href="/guide/">Как настроить бота</a>
+        <a href="/connect/">Как подключить бота</a>
+        <a href="/faq/">Вопрос-ответ</a>
+      </div>
+      <div class="footer-col">
+        <h4>Компания</h4>
+        <a href="/cases/">Отзывы и кейсы</a>
+        <a href="/blog/">Блог для мастеров</a>
+        <a href="https://t.me/AETHEL_support" target="_blank" rel="noopener">Поддержка</a>
+        <a href="mailto:aethel-botstore@mail.ru">Email</a>
+      </div>
+      <div class="footer-col">
+        <h4>Документы</h4>
+        <a href="/documents/offer.html">Договор-оферта</a>
+        <a href="/documents/privacy.html">Политика конфиденциальности</a>
+        <a href="/documents/terms.html">Обработка данных</a>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2025–2026 AETHEL. Все права защищены.</div>
+  </div>
+</footer>
+<div class="floaters"><button class="fbtn" id="toTop" aria-label="Наверх">↑</button></div>
+<nav class="mobile-tabbar" aria-label="Быстрая навигация">
+  <div class="tb-row">
+    <a href="/" class=""><span class="tb-ic">🏠</span><span>Главная</span></a>
+    <a href="/pricing/" class=""><span class="tb-ic">💳</span><span>Тарифы</span></a>
+    <a href="/guide/" class=""><span class="tb-ic">📖</span><span>Инструкция</span></a>
+    <a href="/connect/" class=""><span class="tb-ic">🔌</span><span>Подключить</span></a>
+    <a href="https://t.me/AETHEL_Store_bot?start=ref_7133271669" target="_blank" rel="noopener" class="tb-cta"><span class="tb-ic">🚀</span><span>Бот</span></a>
+  </div>
+</nav>
+
+<script src="/main.js" defer></script>
+</body>
+</html>

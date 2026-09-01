@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Как подключить Telegram-бота для записи клиентов — пошаговая инструкция AETHEL</title>
+<meta name="description" content="Пошаговая инструкция: как выбрать версию и подключить Telegram-бота AETHEL для записи клиентов — от создания бота в BotFather до первого входа в админ-панель.">
+<meta name="keywords" content="как подключить бота для записи, как создать бота в botfather, подключение телеграм бота, как создать бота для записи клиентов">
+<link rel="canonical" href="https://www.aethelbotstore.ru/connect/">
+<meta name="robots" content="index, follow">
+<link rel="icon" type="image/png" href="/assets/aethel-eye-logo.png">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.aethelbotstore.ru/connect/">
+<meta property="og:title" content="Как подключить Telegram-бота для записи клиентов">
+<meta property="og:description" content="Пошаговая инструкция от выбора версии до первого входа в админ-панель.">
+<meta property="og:image" content="https://www.aethelbotstore.ru/assets/aethel-eye-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800;900&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "Как подключить Telegram-бота для записи клиентов",
+  "step": [
+    {"@type":"HowToStep","name":"Выберите версию бота","text":"Определитесь с моделью (Личный, Студия, Бизнес) и тарифом в бот-магазине AETHEL_Store_bot."},
+    {"@type":"HowToStep","name":"Создайте бота в BotFather","text":"Отправьте /newbot, придумайте имя и username, оканчивающийся на bot, сохраните API-токен."},
+    {"@type":"HowToStep","name":"Введите токен в бот-магазине","text":"Вставьте токен от BotFather в AETHEL_Store_bot и придумайте название для админ-панели."},
+    {"@type":"HowToStep","name":"Получите ссылку на бота","text":"Найдите бота по username, который вы указали в BotFather, и запустите его командой /start."},
+    {"@type":"HowToStep","name":"Войдите в админ-панель","text":"Отправьте боту команду /admin, чтобы открыть панель управления."}
+  ]
+}
+</script>
+</head>
+<body>
+<div id="progress"><div id="progress-fill"></div></div>
+
+<header class="site-header">
+  <div class="nav-row">
+    <a href="/" class="brand"><span class="eye-wrap" style="width:30px;height:30px;"><img class="eye-img" src="/assets/aethel-eye-logo.png" alt="AETHEL"></span>AETHEL</a>
+    <nav class="nav-links" id="navLinks">
+      <a href="/">Главная</a>
+      <a href="/pricing/">Тарифы</a>
+      <a href="/cases/">Отзывы</a>
+      <a href="/guide/">Инструкция</a>
+      <a href="/faq/">FAQ</a>
+      <a href="/blog/">Блог</a>
+      <a href="https://t.me/AETHEL_Store_bot?start=ref_landing" target="_blank" rel="noopener" class="nav-cta">Подключить бота</a>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="Меню"><span></span></button>
+  </div>
+</header>
+
+<main>
+  <div class="wrap breadcrumbs"><a href="/">Главная</a><span class="sep">/</span>Как подключить бота</div>
+
+  <section style="padding-top:50px;">
+    <div class="wrap-text">
+      <div class="eyebrow">Подключение</div>
+      <h1 class="article-h1" style="margin-top:14px;">Как подключить <span class="grad-text">Telegram-бота для записи</span> клиентов</h1>
+      <p class="lead" style="font-size:1.05rem; margin-top:14px;">Весь процесс — от выбора версии до готового бота с вашей ссылкой — занимает около 5–10 минут и не требует навыков программирования.</p>
+    </div>
+  </section>
+
+  <section style="padding-top:0;">
+    <div class="wrap-text">
+      <div class="timeline">
+
+        <div class="tl-item">
+          <div class="tl-node">1</div>
+          <div class="tl-card">
+            <h4>Выберите версию бота</h4>
+            <p>Перейдите в бот-магазин <a href="https://t.me/AETHEL_Store_bot?start=ref_landing" target="_blank" rel="noopener" style="color:var(--violet-soft)">@AETHEL_Store_bot</a>, нажмите «Выбрать бота» → выберите модель (Личный / Студия / Бизнес / Бизнес + платежи) → выберите тариф → нажмите «Подключить». Если не уверены, какая версия подходит — смотрите <a href="/pricing/" style="color:var(--violet-soft)">страницу тарифов</a> или напишите в <a href="https://t.me/AETHEL_support" target="_blank" rel="noopener" style="color:var(--violet-soft)">поддержку</a>.</p>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-node">2</div>
+          <div class="tl-card">
+            <h4>Создайте бота в @BotFather</h4>
+            <p>Найдите в Telegram официального бота <b style="color:var(--ink)">@BotFather</b> и отправьте команду <span class="var">/newbot</span>. Затем:</p>
+            <ul style="color:var(--ink-dim); padding-left:20px; margin:10px 0;">
+              <li>Придумайте имя бота — его увидят клиенты (например, «Lash Studio Анна»)</li>
+              <li>Придумайте username — должен заканчиваться на <span class="var">bot</span> или <span class="var">_bot</span> (например, LashStudioAnnaBot)</li>
+              <li>Сохраните полученный API-токен — длинную строку из цифр и букв</li>
+            </ul>
+            <div class="callout"><div class="callout-title">⚠️ Важно</div><p style="margin:0;">Никому не передавайте свой API-токен — это ключ доступа к вашему боту.</p></div>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-node">3</div>
+          <div class="tl-card">
+            <h4>Введите токен в бот-магазине</h4>
+            <p>Вернитесь в <span class="var">@AETHEL_Store_bot</span>, вставьте токен, полученный от BotFather, и придумайте название для админ-панели (его будете видеть только вы).</p>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-node">4</div>
+          <div class="tl-card">
+            <h4>Получите ссылку на своего бота</h4>
+            <p>Введите в поиске Telegram username, который вы указали в BotFather, и отправьте боту <span class="var">/start</span>. Именно этой ссылкой вы будете делиться с клиентами — через неё они будут записываться к вам.</p>
+          </div>
+        </div>
+
+        <div class="tl-item final">
+          <div class="tl-node">✓</div>
+          <div class="tl-card">
+            <h4>Войдите в админ-панель</h4>
+            <p>Отправьте своему боту команду <span class="var">/admin</span> — откроется панель управления. Дальше — заполнение профиля, услуг и расписания.</p>
+            <p><a href="/guide/" class="btn btn-primary" style="margin-top:10px;">Перейти к быстрому старту →</a></p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap-text">
+      <div class="cta-banner">
+        <h2>Остались вопросы по подключению?</h2>
+        <p>Поддержка поможет с выбором версии, подключением и настройкой — или закажет разработку бота под ваш сценарий.</p>
+        <div class="hero-ctas">
+          <a href="https://t.me/AETHEL_support" target="_blank" rel="noopener" class="btn btn-primary">💬 Написать в поддержку</a>
+          <a href="https://t.me/AETHEL_bots" target="_blank" rel="noopener" class="btn btn-ghost">📢 Канал с новостями</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="eye-wrap" style="width:38px;height:38px;"><img class="eye-img" src="/assets/aethel-eye-logo.png" alt="AETHEL"></div>
+        <p>Telegram-бот для записи клиентов. Готовая система для мастеров и студий.</p>
+        <div class="footer-social">
+          <a href="https://t.me/AETHEL_bots" target="_blank" rel="noopener">📢 Канал</a>
+          <a href="https://t.me/AETHEL_reviews" target="_blank" rel="noopener">⭐ Отзывы</a>
+          <a href="https://t.me/AETHEL_support" target="_blank" rel="noopener">💬 Поддержка</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Продукт</h4>
+        <a href="/pricing/">Тарифы и версии</a>
+        <a href="/guide/">Как настроить бота</a>
+        <a href="/connect/">Как подключить бота</a>
+        <a href="/faq/">Вопрос-ответ</a>
+      </div>
+      <div class="footer-col">
+        <h4>Компания</h4>
+        <a href="/cases/">Отзывы и кейсы</a>
+        <a href="/blog/">Блог для мастеров</a>
+        <a href="https://t.me/AETHEL_support" target="_blank" rel="noopener">Поддержка</a>
+        <a href="mailto:aethel-botstore@mail.ru">Email</a>
+      </div>
+      <div class="footer-col">
+        <h4>Документы</h4>
+        <a href="/documents/offer.html">Договор-оферта</a>
+        <a href="/documents/privacy.html">Политика конфиденциальности</a>
+        <a href="/documents/terms.html">Обработка данных</a>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2025–2026 AETHEL. Все права защищены.</div>
+  </div>
+</footer>
+<div class="floaters"><button class="fbtn" id="toTop" aria-label="Наверх">↑</button></div>
+<nav class="mobile-tabbar" aria-label="Быстрая навигация">
+  <div class="tb-row">
+    <a href="/" class=""><span class="tb-ic">🏠</span><span>Главная</span></a>
+    <a href="/pricing/" class=""><span class="tb-ic">💳</span><span>Тарифы</span></a>
+    <a href="/guide/" class=""><span class="tb-ic">📖</span><span>Инструкция</span></a>
+    <a href="/connect/" class="current"><span class="tb-ic">🔌</span><span>Подключить</span></a>
+    <a href="https://t.me/AETHEL_Store_bot?start=ref_7133271669" target="_blank" rel="noopener" class="tb-cta"><span class="tb-ic">🚀</span><span>Бот</span></a>
+  </div>
+</nav>
+
+<script src="/main.js" defer></script>
+</body>
+</html>
