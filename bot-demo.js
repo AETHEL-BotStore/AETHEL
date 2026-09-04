@@ -2,9 +2,9 @@
   'use strict';
 
   const services = [
-    { id:'color', title:'Окрашивание волос', price:'4 500 ₽', duration:'3 часа', prepay:'1 000 ₽', image:'/assets/demo-service-color.jpg', alt:'Окрашивание волос в салоне' },
-    { id:'cut', title:'Стрижка + укладка', price:'2 500 ₽', duration:'1 час 30 минут', prepay:'500 ₽', image:'/assets/demo-service-cut.jpg', alt:'Стрижка волос в салоне' },
-    { id:'care', title:'Уход и восстановление', price:'2 200 ₽', duration:'1 час', prepay:'500 ₽', image:'/assets/demo-service-care.jpg', alt:'Профессиональный уход за волосами' }
+    { id:'color', title:'Окрашивание волос', price:'4 500 ₽', duration:'3 часа', prepay:'1 000 ₽', image:'/assets/direct-images/demo-service-color.webp', alt:'Окрашивание волос в салоне' },
+    { id:'cut', title:'Стрижка + укладка', price:'2 500 ₽', duration:'1 час 30 минут', prepay:'500 ₽', image:'/assets/direct-images/demo-service-cut.webp', alt:'Стрижка волос в салоне' },
+    { id:'care', title:'Уход и восстановление', price:'2 200 ₽', duration:'1 час', prepay:'500 ₽', image:'/assets/direct-images/demo-service-care.webp', alt:'Профессиональный уход за волосами' }
   ];
   const dates = ['04(пт)', '05(сб)', '06(вс)'];
   const times = ['10:00 – 13:00', '12:30 – 15:30', '16:00 – 19:00'];
@@ -56,7 +56,7 @@
     const isClient = kind === 'client';
     return `<div class="tg-phone aethel-bot-demo" data-tg-phone="${kind}">
       <div class="tg-status"><span>23:02</span><i class="tg-island"></i><span>▮▮▮ LTE&nbsp; 32</span></div>
-      <div class="tg-head"><span class="tg-back">‹ <b>45</b></span><span class="tg-head-title"><b>ALINA • запись</b><small>бот</small></span><img class="tg-avatar" src="/assets/demo-master.jpg" alt="Мастер Алина"></div>
+      <div class="tg-head"><span class="tg-back">‹ <b>45</b></span><span class="tg-head-title"><b>ALINA • запись</b><small>бот</small></span><img class="tg-avatar" src="/assets/direct-images/demo-master.webp" alt="Мастер Алина"></div>
       <div class="tg-chat" data-${kind}-chat aria-live="polite"></div>
       <div class="tg-composer" aria-hidden="true"><span class="tg-round-icon">📎</span><span class="tg-input">Сообщение <b>⌨</b></span><span class="tg-round-icon">🎙</span></div>
       <div class="tg-reply-keyboard">${isClient ? clientKeyboard() : adminKeyboard()}</div>
@@ -92,12 +92,12 @@
       addInline([{label:'🚀 Подключить AETHEL',href:'/connect/'}]);
     }
     function welcome() {
-      chat.innerHTML = botBubble('<strong>Добро пожаловать в мою уютную студию 💗</strong><p><u>Нажми кнопку ниже для записи на процедуру ↓</u></p><p>Этот бот разработан с любовью командой <a href="#">AETHEL ♡</a></p>', '/assets/demo-master.jpg', 'tg-master-media');
+      chat.innerHTML = botBubble('<strong>Добро пожаловать в мою уютную студию 💗</strong><p><u>Нажми кнопку ниже для записи на процедуру ↓</u></p><p>Этот бот разработан с любовью командой <a href="#">AETHEL ♡</a></p>', '/assets/direct-images/demo-master.webp', 'tg-master-media');
       chat.scrollTop = chat.scrollHeight;
     }
     function startBooking() {
       sayUser('📅 Запись на сеанс');
-      sayBot('<strong>✨ Алина ✨</strong><p><strong>Колорист-стилист · опыт 7 лет</strong></p><div class="tg-quote">Сделаю цвет и форму, которые легко поддерживать дома</div><p>Выберите услугу:</p>', '/assets/demo-master.jpg', 'tg-master-media');
+      sayBot('<strong>✨ Алина ✨</strong><p><strong>Колорист-стилист · опыт 7 лет</strong></p><div class="tg-quote">Сделаю цвет и форму, которые легко поддерживать дома</div><p>Выберите услугу:</p>', '/assets/direct-images/demo-master.webp', 'tg-master-media');
       addInline(services.map(function (service) { return {label:service.title,action:'service:'+service.id}; }));
     }
     function showServices(outgoing) {

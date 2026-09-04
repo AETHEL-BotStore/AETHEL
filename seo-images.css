@@ -146,6 +146,8 @@
   margin: 30px auto;
 }
 
+.seo-article-visual picture { display: block; }
+
 .seo-article-visual img {
   width: 100%;
   height: auto;

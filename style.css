@@ -224,6 +224,7 @@ section{ padding:90px 0; }
 .card{ background:var(--panel); border:1px solid var(--panel-border); border-radius:var(--radius); padding:26px; transition:.25s; }
 .card:hover{ border-color:var(--violet); transform:translateY(-3px); }
 .card .ic{ font-size:1.7rem; display:block; margin-bottom:14px; }
+.card .ic img{ width:52px; height:52px; object-fit:contain; filter:drop-shadow(0 8px 18px rgba(236,72,153,.2)); }
 .card h3{ font-size:1.08rem; margin-bottom:8px; }
 .card p{ font-size:.88rem; margin:0; }
 
@@ -574,4 +575,3 @@ tbody tr:hover{ background:rgba(168,85,247,.05); }
   .hero-stats{ gap:20px; }
   .hero-stats .stat b{ font-size:1.25rem; }
 }
-

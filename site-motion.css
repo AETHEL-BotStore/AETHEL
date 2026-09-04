@@ -1,0 +1,85 @@
+:root {
+  --aethel-motion-duration: .72s;
+  --aethel-motion-ease: cubic-bezier(.2,.75,.25,1);
+}
+
+/* Motion is enabled only after JavaScript has marked the elements. */
+.aethel-motion-ready .aethel-reveal {
+  opacity: 0;
+  translate: var(--aethel-reveal-x, 0) var(--aethel-reveal-y, 24px);
+  transition:
+    opacity var(--aethel-motion-duration) var(--aethel-motion-ease),
+    translate var(--aethel-motion-duration) var(--aethel-motion-ease);
+  transition-delay: var(--aethel-reveal-delay, 0ms);
+  will-change: opacity, translate;
+}
+
+.aethel-motion-ready .aethel-reveal.aethel-from-left {
+  --aethel-reveal-x: -24px;
+  --aethel-reveal-y: 0;
+}
+
+.aethel-motion-ready .aethel-reveal.aethel-from-right {
+  --aethel-reveal-x: 24px;
+  --aethel-reveal-y: 0;
+}
+
+.aethel-motion-ready .aethel-reveal.aethel-visible {
+  opacity: 1;
+  translate: 0 0;
+  will-change: auto;
+}
+
+.aethel-attention.aethel-visible {
+  animation: aethel-text-focus 1.05s ease .12s 1 both;
+}
+
+a.aethel-cta-attention.aethel-visible,
+button.aethel-cta-attention.aethel-visible {
+  animation: aethel-cta-focus 1.25s ease .2s 1 both;
+}
+
+.aethel-icon-attention.aethel-visible {
+  animation: aethel-icon-focus 1.15s ease .16s 1 both;
+}
+
+@keyframes aethel-text-focus {
+  0%, 100% { text-shadow: none; }
+  48% { text-shadow: 0 0 22px rgba(197,148,255,.48); }
+}
+
+@keyframes aethel-cta-focus {
+  0%, 100% { outline: 0 solid rgba(196,132,252,0); outline-offset: 0; }
+  48% { outline: 6px solid rgba(196,132,252,.13); outline-offset: 3px; }
+}
+
+@keyframes aethel-icon-focus {
+  0%, 100% { scale: 1; }
+  48% { scale: 1.06; }
+}
+
+@media (max-width: 680px) {
+  :root { --aethel-motion-duration: .62s; }
+  .aethel-motion-ready .aethel-reveal {
+    --aethel-reveal-y: 18px;
+  }
+  .aethel-motion-ready .aethel-reveal.aethel-from-left,
+  .aethel-motion-ready .aethel-reveal.aethel-from-right {
+    --aethel-reveal-x: 0;
+    --aethel-reveal-y: 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aethel-motion-ready .aethel-reveal {
+    opacity: 1;
+    translate: none;
+    transition: none;
+  }
+  .aethel-attention.aethel-visible,
+  a.aethel-cta-attention.aethel-visible,
+  button.aethel-cta-attention.aethel-visible,
+  .aethel-icon-attention.aethel-visible {
+    animation: none;
+  }
+}
