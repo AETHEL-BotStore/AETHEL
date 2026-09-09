@@ -26,7 +26,12 @@
     const cls = columns === 2 ? ' two' : columns === 3 ? ' three' : '';
     return `<div class="tg-inline${cls}">${items.map(function (item) {
       const wide = item.wide ? ' wide' : '';
-      if (item.href) return `<a class="tg-inline-btn${wide}" href="${item.href}">${item.label}</a>`;
+      if (item.href) {
+        const analytics = item.analyticsAction
+          ? ` data-direct-action="${esc(item.analyticsAction)}" data-cta-position="${esc(item.position || 'demo')}"`
+          : '';
+        return `<a class="tg-inline-btn${wide}" href="${esc(item.href)}"${analytics}>${item.label}</a>`;
+      }
       return `<button type="button" class="tg-inline-btn${wide}" data-${actionName}="${item.action}">${item.label}</button>`;
     }).join('')}</div>`;
   }
@@ -89,7 +94,7 @@
       if (state.ctaShown || (!force && state.interactions < 5)) return;
       state.ctaShown = true;
       sayBot('<strong>Хотите опробовать все возможности бота?</strong><p class="tg-cta-copy">Создайте своего бота, добавьте услуги и проверьте полный сценарий на реальных настройках.</p>');
-      addInline([{label:'🚀 Подключить AETHEL',href:'/connect/'}]);
+      addInline([{label:'🚀 Подключить AETHEL',href:'/connect/',analyticsAction:'connect-guide',position:'demo-client'}]);
     }
     function welcome() {
       chat.innerHTML = botBubble('<strong>Добро пожаловать в мою уютную студию 💗</strong><p><u>Нажми кнопку ниже для записи на процедуру ↓</u></p><p>Этот бот разработан с любовью командой <a href="#">AETHEL ♡</a></p>', '/assets/direct-images/demo-master.webp', 'tg-master-media');
@@ -195,7 +200,7 @@
       if (ctaShown || (!force && interactions < 4)) return;
       ctaShown = true;
       sayBot('<strong>Хотите опробовать все возможности AETHEL?</strong><p>Подключите тестового бота и настройте настоящее расписание, услуги, мастеров и уведомления.</p>');
-      addInline([{label:'🚀 Открыть инструкцию по подключению',href:'/connect/'}]);
+      addInline([{label:'🚀 Открыть инструкцию по подключению',href:'/connect/',analyticsAction:'connect-guide',position:'demo-admin'}]);
     }
     function pendingRecord() {
       sayBot(`<strong>📋 Поступила новая запись</strong><p>👩‍🎨 Мастер: Алина<br>👤 Клиент: Анна К.<br>📱 Телефон: +7 ••• •••-12-34</p><p>📋 Детали записи:<br>• Услуга: ${esc(booking.service)}<br>• Дата: ${esc(booking.date)}.09.2026<br>• Время: ${esc(booking.time)}<br>• Сумма: ${esc(booking.price)}<br>• Предоплата: ${esc(booking.prepay)}</p>`);

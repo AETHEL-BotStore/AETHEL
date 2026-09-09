@@ -10,6 +10,7 @@
   };
   var sent = {};
   var primarySessionKey = 'aethel_direct_qualified_lead_sent';
+  var query = new URLSearchParams(window.location.search);
 
   function sendGoal(name, params) {
     if (typeof window.ym !== 'function') return;
@@ -30,7 +31,6 @@
   }
 
   function campaignParams() {
-    var query = new URLSearchParams(window.location.search);
     return {
       landing: 'direct',
       utm_source: query.get('utm_source') || '',
@@ -46,6 +46,83 @@
   if (typeof window.ym === 'function') {
     window.ym(COUNTER_ID, 'params', {direct_landing: attribution});
   }
+
+  function setupAttributedTelegramLinks() {
+    var BOT_START_URL = 'https://t.me/AETHEL_Store_bot?start=';
+    var links = document.querySelectorAll('a[data-direct-cta="bot"]');
+    if (!links.length) return;
+
+    var positionCodes = {
+      header: 'h',
+      hero: 'r',
+      'after-demo': 'd',
+      personal: 'p',
+      studio: 's',
+      results: 'o',
+      final: 'f',
+      'mobile-sticky': 'm'
+    };
+
+    function cleanDigits(value, maxLength) {
+      var cleaned = String(value || '').replace(/\D/g, '').slice(0, maxLength);
+      return cleaned || '0';
+    }
+
+    function cleanClientId(value) {
+      var cleaned = String(value || '').replace(/\D/g, '').slice(0, 32);
+      return /^[0-9]{5,32}$/.test(cleaned) ? cleaned : '';
+    }
+
+    function setStartParameter(parameter, method) {
+      if (!/^[A-Za-z0-9_-]{1,64}$/.test(parameter)) return;
+      links.forEach(function (link) {
+        link.href = BOT_START_URL + parameter;
+        link.dataset.metrikaAttribution = method;
+      });
+    }
+
+    function applyClientId(clientId) {
+      clientId = cleanClientId(clientId);
+      if (!clientId) return;
+
+      var campaignId = cleanDigits(query.get('utm_campaign'), 14);
+      var adId = cleanDigits((query.get('utm_content') || '').split('_')[0], 22);
+
+      links.forEach(function (link) {
+        var position = link.getAttribute('data-cta-position') || 'unknown';
+        var positionCode = positionCodes[position] || 'u';
+        var payload = ['ymc', clientId, campaignId, adId, positionCode].join('_');
+
+        // Telegram допускает не более 64 символов в start-параметре.
+        if (payload.length > 64) {
+          payload = ['ymc', clientId, campaignId, '0', positionCode].join('_');
+        }
+        if (payload.length <= 64) {
+          link.href = BOT_START_URL + payload;
+          link.dataset.metrikaAttribution = 'client_id';
+        }
+      });
+    }
+
+    // Без JavaScript или при блокировке Метрики бот всё равно увидит источник.
+    setStartParameter('ref_landing', 'landing');
+
+    // Резервная точная привязка к клику Директа, пока ClientID ещё не получен.
+    var yclid = query.get('yclid') || '';
+    if (/^[A-Za-z0-9_-]{5,60}$/.test(yclid)) {
+      setStartParameter('ymy_' + yclid, 'yclid');
+    }
+
+    // Основной формат одновременно связывает событие с визитом Метрики и
+    // сохраняет в базе бота кампанию, объявление и позицию CTA.
+    if (typeof window.ym === 'function') {
+      window.ym(COUNTER_ID, 'getClientID', function (clientId) {
+        applyClientId(clientId);
+      });
+    }
+  }
+
+  setupAttributedTelegramLinks();
 
   function setupMotion() {
     var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -167,7 +244,7 @@
       }
     }
 
-    var anchor = event.target.closest && event.target.closest('[data-direct-action="demo-anchor"]');
+    var anchor = event.target.closest && event.target.closest('[data-direct-action="demo-anchor"], [data-direct-action="connect-guide"]');
     if (anchor) {
       goalOnce('direct_demo_interest', Object.assign({position: anchor.getAttribute('data-cta-position') || 'page'}, attribution));
     }
@@ -183,7 +260,12 @@
       channel: 'direct_channel_click'
     };
     var goal = goalMap[destination];
-    var params = Object.assign({destination: destination, cta_position: position, engagement_score: engagementScore()}, attribution);
+    var params = Object.assign({
+      destination: destination,
+      cta_position: position,
+      engagement_score: engagementScore(),
+      attribution_method: cta.dataset.metrikaAttribution || 'not_applicable'
+    }, attribution);
     if (goal) sendGoal(goal, params);
 
     if ((destination === 'bot' || destination === 'support') && engagementScore() >= 2) {
