@@ -2,66 +2,121 @@
 <html lang="ru">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#090d19">
   <title>AETHEL · Статистика</title>
-  <meta name="description" content="Понятная статистика записей, клиентов, дохода и загрузки AETHEL">
+  <meta name="description" content="Интерактивная статистика записей, клиентов и дохода AETHEL">
   <link rel="icon" type="image/png" href="aethel-eye-logo.png">
   <link rel="apple-touch-icon" href="aethel-eye-logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="ambient"></div>
+  <div class="ambient" aria-hidden="true"></div>
   <header class="topbar">
-    <a class="brand" href="https://www.aethelbotstore.ru/"><img class="brand-mark" src="aethel-eye-logo.png" alt="AETHEL">AETHEL</a>
-    <div class="report-meta"><span id="masterName">Статистика мастера</span><span class="dot">·</span><span id="updatedAt">—</span></div>
-    <div class="top-actions"><button class="ghost" id="copyLinkBtn">Скопировать ссылку</button><button class="ghost" id="printBtn">Печать / PDF</button></div>
+    <a class="brand" href="https://www.aethelbotstore.ru/" aria-label="AETHEL"><img class="brand-mark" src="aethel-eye-logo.png" alt=""><span>AETHEL</span></a>
+    <div class="report-meta"><span id="masterName">Статистика мастера</span><span class="dot">·</span><span id="updatedAt">загрузка…</span></div>
+    <div class="top-actions"><button class="ghost compact" id="copyLinkBtn" type="button"><span>Скопировать ссылку</span><b>⌁</b></button><button class="ghost compact" id="printBtn" type="button"><span>Печать / PDF</span><b>↗</b></button></div>
   </header>
   <div class="layout">
-    <aside class="sidebar">
-      <div class="side-title">ОТЧЁТ</div>
-      <button class="nav active" data-section="overview">◈ <span>Обзор</span></button>
-      <button class="nav" data-section="money">₽ <span>Финансы</span></button>
-      <button class="nav" data-section="clients">♡ <span>Клиенты</span></button>
-      <button class="nav" data-section="appointments">▦ <span>Записи</span></button>
-      <button class="nav" data-section="services">◌ <span>Услуги</span></button>
-      <button class="nav" data-section="behavior">⌁ <span>Поведение</span></button>
-      <button class="nav" data-section="forecast">↗ <span>Прогноз</span></button>
-      <div class="side-note">Персональный отчёт. Ссылка даёт доступ к данным — не пересылайте её посторонним.</div>
+    <aside class="sidebar" aria-label="Разделы статистики">
+      <div class="side-title">РАЗДЕЛЫ</div>
+      <button class="nav active" data-section="overview" type="button"><b>◈</b><span>Обзор</span></button>
+      <button class="nav" data-section="money" type="button"><b>₽</b><span>Финансы</span></button>
+      <button class="nav" data-section="clients" type="button"><b>♡</b><span>Клиенты</span></button>
+      <button class="nav" data-section="appointments" type="button"><b>▦</b><span>Записи</span></button>
+      <button class="nav" data-section="services" type="button"><b>◌</b><span>Услуги</span></button>
+      <button class="nav" data-section="behavior" type="button"><b>⌁</b><span>Поведение</span></button>
+      <button class="nav" data-section="forecast" type="button"><b>↗</b><span>Прогноз</span></button>
+      <div class="side-note">Ссылка содержит персональные данные клиентов. Не передавайте её посторонним.</div>
     </aside>
     <main>
       <section id="overview" class="section active">
-        <div class="eyebrow">ПОНЯТНО О ГЛАВНОМ</div><h1>Как работает ваш бизнес</h1>
-        <p class="lead">Все ключевые цифры в одном экране: что уже заработано, что запланировано и где есть точка роста.</p>
+        <div class="section-heading"><div><div class="eyebrow">ПОНЯТНО О ГЛАВНОМ</div><h1>Пульс вашего бизнеса</h1><p class="lead">Главные цифры, ближайшая загрузка и точки роста — без сложных таблиц.</p></div><div class="live-pill"><i></i> Данные отчёта</div></div>
         <div class="kpis" id="kpis"></div>
-        <div class="grid two">
-          <article class="card hero-finance"><div class="card-head"><div><h2>Этот месяц</h2><p id="monthCaption">Факт и ожидаемый доход</p></div><span class="badge" id="monthDelta">—</span></div><div class="fact-grid"><div><span>Факт</span><b id="monthFact">—</b></div><div><span>Прогноз</span><b id="monthForecast">—</b></div><div><span>Предоплаты</span><b id="monthPrepayment">—</b></div></div><div class="progress"><i id="monthProgress"></i></div><small class="muted" id="monthProgressText">—</small></article>
-          <article class="card"><div class="card-head"><div><h2>Следующие шаги</h2><p>Подсказки по текущему состоянию базы</p></div></div><div id="insights" class="insights"></div></article>
+        <div class="grid two overview-top">
+          <article class="card hero-finance"><div class="card-head"><div><h2>Этот месяц</h2><p>Факт, подтверждённые записи и расчётный итог</p></div><span class="badge" id="monthDelta">—</span></div><div class="fact-grid"><div><span>Уже заработано</span><b id="monthFact">—</b></div><div><span>Ожидаемый итог</span><b id="monthForecast">—</b></div><div><span>Предоплаты</span><b id="monthPrepayment">—</b></div></div><div class="progress"><i id="monthProgress"></i></div><small class="muted" id="monthProgressText">—</small></article>
+          <article class="card"><div class="card-head"><div><h2>Что важно сейчас</h2><p>Автоматические подсказки по текущей базе</p></div></div><div id="insights" class="insights"></div></article>
         </div>
+        <article class="card chart-card spotlight">
+          <div class="card-head responsive-head"><div><h2>Доход в динамике</h2><p>Факт и прогноз разделены цветом и типом линии</p></div><select id="incomePeriod" aria-label="Период графика"><option value="day">По дням</option><option value="week">По неделям</option><option value="month" selected>По месяцам</option><option value="year">По годам</option></select></div>
+          <div class="chart-legend"><span><i class="legend-line fact"></i><b>Фактический доход</b></span><span><i class="legend-line prediction"></i><b>Прогноз</b></span></div>
+          <div class="chart line-chart" id="incomeChart"></div><p class="chart-hint">Нажмите на точку или столбец, чтобы увидеть записи, из которых сложилась сумма.</p>
+        </article>
         <div class="grid two">
-          <article class="card chart-card"><div class="card-head"><div><h2>Доход в динамике</h2><p>Фактические суммы выполненных записей</p></div><select id="incomePeriod"><option value="monthly">Месяцы</option><option value="weekly">Недели</option><option value="yearly">Годы</option></select></div><div class="chart" id="incomeChart"></div><div class="legend"><span><i class="legend-dot violet"></i>Факт</span><span><i class="legend-dot pink"></i>Прогноз</span></div></article>
-          <article class="card"><div class="card-head"><div><h2>Клиентская база</h2><p>Кого важно удержать или вернуть</p></div><button class="link-btn" data-go="clients">Открыть всех →</button></div><div id="clientSegments" class="segments"></div><div class="mini-callout" id="topClientCallout"></div></article>
+          <article class="card"><div class="card-head"><div><h2>Клиентская база</h2><p>Кого удержать, а кого вернуть</p></div><button class="link-btn" data-go="clients" type="button">Открыть всех →</button></div><div id="clientSegments" class="segments"></div><div class="mini-callout" id="topClientCallout"></div></article>
+          <article class="card"><div class="card-head"><div><h2>Предстоящая загрузка</h2><p>Ближайшие подтверждённые записи</p></div><button class="link-btn" data-go="appointments" type="button">Все записи →</button></div><div id="upcomingMini"></div></article>
         </div>
-        <div class="grid two"><article class="card"><div class="card-head"><div><h2>Предстоящая загрузка</h2><p>Ближайшие записи по календарю</p></div><button class="link-btn" data-go="appointments">Все записи →</button></div><div id="upcomingMini"></div></article><article class="card"><div class="card-head"><div><h2>Популярные услуги</h2><p>По доходу и числу визитов</p></div><button class="link-btn" data-go="services">Подробнее →</button></div><div id="serviceMini"></div></article></div>
+        <article class="card"><div class="card-head"><div><h2>Услуги, которые двигают доход</h2><p>Самые востребованные направления</p></div><button class="link-btn" data-go="services" type="button">Подробнее →</button></div><div id="serviceMini" class="service-mini-grid"></div></article>
       </section>
 
-      <section id="money" class="section"><div class="eyebrow">ФИНАНСЫ</div><h1>Доход и загрузка</h1><p class="lead">Сравнивайте факт с ожидаемым результатом и понимайте, откуда складывается выручка.</p><div class="kpis" id="moneyKpis"></div><div class="grid two"><article class="card"><div class="card-head"><div><h2>План / факт</h2><p>Прогноз строится по истории дохода и активным записям.</p></div></div><div id="planFact" class="plan-fact"></div></article><article class="card"><div class="card-head"><div><h2>Предоплаты</h2><p>Сколько денег уже закреплено за будущими записями.</p></div></div><div id="prepaymentSummary" class="plan-fact"></div></article></div><article class="card"><div class="card-head"><div><h2>Доход по месяцам</h2><p>Наведите курсор на столбец, чтобы увидеть подробности.</p></div></div><div class="chart tall" id="incomeChartLarge"></div></article><div class="grid three"><article class="card"><h2>Средний чек</h2><div class="big-number" id="avgCheck">—</div><p class="muted">Средняя стоимость выполненной записи.</p></article><article class="card"><h2>Повторные визиты</h2><div class="big-number" id="repeatRate">—</div><p class="muted">Клиенты, которые возвращались больше одного раза.</p></article><article class="card"><h2>Отмены</h2><div class="big-number" id="cancelRate">—</div><p class="muted">Доля отменённых записей от общего числа.</p></article></div></section>
+      <section id="money" class="section">
+        <div class="eyebrow">ФИНАНСЫ</div><h1>Доход без догадок</h1><p class="lead">Соберите собственный отчёт: выберите показатель, период, услугу и детализацию.</p>
+        <div class="kpis" id="moneyKpis"></div>
+        <article class="card analytics-lab">
+          <div class="card-head responsive-head"><div><span class="lab-label">ИНТЕРАКТИВНЫЙ ОТЧЁТ</span><h2>Конструктор аналитики</h2><p>Любые срезы по доходу, записям, предоплатам и услугам.</p></div><button class="ghost" id="resetAnalytics" type="button">Сбросить</button></div>
+          <div class="analytics-controls">
+            <label><span>Показатель</span><select id="analyticsMetric"><option value="income">Доход</option><option value="appointments">Количество записей</option><option value="avg_check">Средний чек</option><option value="prepayment">Предоплаты</option></select></label>
+            <label><span>Группировка</span><select id="analyticsGroup"><option value="day">Дни</option><option value="week">Недели</option><option value="month" selected>Месяцы</option><option value="year">Годы</option><option value="service">Услуги</option><option value="month_service">Месяцы × услуги</option></select></label>
+            <label><span>Статус</span><select id="analyticsStatus"><option value="completed" selected>Выполненные</option><option value="upcoming">Подтверждённые</option><option value="pending">Ожидают подтверждения</option><option value="all">Все, кроме отмен</option></select></label>
+            <label><span>Услуга</span><select id="analyticsService"><option value="all">Все услуги</option></select></label>
+            <label><span>С даты</span><input id="analyticsFrom" type="date"></label><label><span>По дату</span><input id="analyticsTo" type="date"></label>
+            <label><span>Вид</span><select id="analyticsView"><option value="bars">Столбцы</option><option value="line">Линия</option><option value="table">Таблица</option></select></label>
+          </div>
+          <div class="substats" id="analyticsSummary"></div><div class="chart tall analytics-chart" id="analyticsChart"></div><p class="chart-hint">Каждый элемент графика открывается — нажмите, чтобы увидеть записи внутри выбранного периода.</p>
+        </article>
+        <div class="grid two">
+          <article class="card"><div class="card-head"><div><h2>План / факт</h2><p>Сколько уже получено и сколько ожидается</p></div></div><div id="planFact" class="plan-fact"></div></article>
+          <article class="card"><div class="card-head"><div><h2>Предоплаты</h2><p>Онлайн и подтверждённые мастером учитываются одинаково</p></div></div><div id="prepaymentSummary" class="plan-fact"></div></article>
+        </div>
+        <article class="card"><div class="card-head"><div><h2>Доход по месяцам</h2><p>Нажмите на период для расшифровки</p></div></div><div class="chart tall" id="incomeChartLarge"></div></article>
+        <div class="grid three"><article class="card metric-card"><h2>Средний чек</h2><div class="big-number" id="avgCheck">—</div><p class="muted">Средняя стоимость выполненной записи.</p></article><article class="card metric-card"><h2>Повторные визиты</h2><div class="big-number" id="repeatRate">—</div><p class="muted">Доля клиентов, которые возвращались.</p></article><article class="card metric-card"><h2>Отмены</h2><div class="big-number" id="cancelRate">—</div><p class="muted">Доля отменённых записей.</p></article></div>
+      </section>
 
-      <section id="clients" class="section"><div class="eyebrow">КЛИЕНТЫ</div><h1>Клиентская база</h1><p class="lead">Ищите клиента, открывайте историю визитов и сразу переходите в Telegram.</p><div class="toolbar"><input id="clientSearch" placeholder="Поиск по имени, телефону, @username"><select id="clientSegmentFilter"><option value="all">Все сегменты</option><option value="new">Новые</option><option value="loyal">Постоянные</option><option value="sleeping">Спящие</option><option value="lost">Ушедшие</option></select><select id="sleepThreshold"><option value="30">Спящий через 30 дней</option><option value="45">Спящий через 45 дней</option><option value="60" selected>Спящий через 60 дней</option><option value="90">Спящий через 90 дней</option></select></div><div class="segments wide" id="clientSegmentsLarge"></div><article class="card table-card"><div class="table-wrap"><table><thead><tr><th>Клиент</th><th>Сегмент</th><th>Визиты</th><th>Потратил</th><th>Последний визит</th><th>Средний интервал</th><th>Действия</th></tr></thead><tbody id="clientsTable"></tbody></table></div></article></section>
+      <section id="clients" class="section">
+        <div class="eyebrow">КЛИЕНТЫ</div><h1>Клиентская база</h1><p class="lead">Нажмите на имя или круглую иконку, чтобы открыть карточку и историю клиента.</p>
+        <div class="toolbar"><input id="clientSearch" placeholder="Имя, телефон или @username"><select id="clientSegmentFilter"><option value="all">Все сегменты</option><option value="new">Новые</option><option value="loyal">Постоянные</option><option value="sleeping">Спящие</option><option value="lost">Ушедшие</option></select><select id="sleepThreshold"><option value="30">Спящий через 30 дней</option><option value="45">Спящий через 45 дней</option><option value="60" selected>Спящий через 60 дней</option><option value="90">Спящий через 90 дней</option></select></div>
+        <div class="segments wide" id="clientSegmentsLarge"></div>
+        <article class="card table-card desktop-table"><div class="table-wrap"><table><thead><tr><th>Клиент</th><th>Сегмент</th><th>Визиты</th><th>Потратил</th><th>Последний визит</th><th>Интервал</th><th>Действия</th></tr></thead><tbody id="clientsTable"></tbody></table></div></article>
+        <div class="mobile-cards" id="clientsCards"></div>
+      </section>
 
-      <section id="appointments" class="section"><div class="eyebrow">РАСПИСАНИЕ</div><h1>Все записи</h1><p class="lead">Прошедшие, будущие и отменённые записи с оплатами, заметками и интервалами.</p><div class="toolbar"><input id="appointmentSearch" placeholder="Клиент, телефон, username или услуга"><select id="statusFilter"><option value="all">Все статусы</option><option value="completed">Выполнены</option><option value="upcoming">Предстоящие</option><option value="cancelled">Отменены</option></select><select id="serviceFilter"><option value="all">Все услуги</option></select><input type="date" id="dateFrom"><input type="date" id="dateTo"></div><div class="substats" id="appointmentSubstats"></div><article class="card table-card"><div class="table-wrap"><table><thead><tr><th>Дата и время</th><th>Клиент</th><th>Услуга</th><th>Стоимость</th><th>Предоплата</th><th>Статус</th><th></th></tr></thead><tbody id="appointmentsTable"></tbody></table></div><div class="pager"><button class="ghost" id="prevPage">← Назад</button><span id="pageInfo">1 / 1</span><button class="ghost" id="nextPage">Вперёд →</button></div></article></section>
+      <section id="appointments" class="section">
+        <div class="eyebrow">РАСПИСАНИЕ</div><h1>Все записи</h1><p class="lead">Прошедшие и будущие записи с оплатами, заметками и быстрым переходом к клиенту.</p>
+        <div class="toolbar"><input id="appointmentSearch" placeholder="Клиент, телефон, username или услуга"><select id="statusFilter"><option value="all">Все статусы</option><option value="completed">Выполнены</option><option value="upcoming">Подтверждены</option><option value="pending">Ожидают подтверждения</option><option value="cancelled">Отменены</option></select><select id="serviceFilter"><option value="all">Все услуги</option></select><input type="date" id="dateFrom" aria-label="Дата с"><input type="date" id="dateTo" aria-label="Дата по"></div>
+        <div class="substats" id="appointmentSubstats"></div>
+        <article class="card table-card desktop-table"><div class="table-wrap"><table><thead><tr><th>Дата и время</th><th>Клиент</th><th>Услуга</th><th>Стоимость</th><th>Предоплата</th><th>Статус</th><th></th></tr></thead><tbody id="appointmentsTable"></tbody></table></div><div class="pager"><button class="ghost" id="prevPage" type="button">← Назад</button><span id="pageInfo">1 / 1</span><button class="ghost" id="nextPage" type="button">Вперёд →</button></div></article>
+        <div class="mobile-cards" id="appointmentsCards"></div><div class="pager mobile-pager"><button class="ghost" id="prevPageMobile" type="button">←</button><span id="pageInfoMobile">1 / 1</span><button class="ghost" id="nextPageMobile" type="button">→</button></div>
+      </section>
 
-      <section id="services" class="section"><div class="eyebrow">УСЛУГИ</div><h1>Что выбирают клиенты</h1><p class="lead">Доход, количество записей, средний чек и доля каждой услуги.</p><div class="grid two"><article class="card"><div class="card-head"><div><h2>Распределение дохода</h2><p>Какие услуги формируют выручку</p></div></div><div id="serviceDonut" class="donut-wrap"></div></article><article class="card"><div class="card-head"><div><h2>Рейтинг услуг</h2><p>Сортировка по доходу</p></div></div><div id="serviceBars" class="service-bars"></div></article></div><article class="card table-card"><div class="table-wrap"><table><thead><tr><th>Услуга</th><th>Записей</th><th>Доход</th><th>Средний чек</th><th>Доля дохода</th></tr></thead><tbody id="servicesTable"></tbody></table></div></article></section>
+      <section id="services" class="section">
+        <div class="eyebrow">УСЛУГИ</div><h1>Что выбирают клиенты</h1><p class="lead">Доход, число визитов, средний чек и доля каждой услуги.</p>
+        <div class="grid two"><article class="card"><div class="card-head"><div><h2>Распределение дохода</h2><p>Нажмите на сегмент для детализации</p></div></div><div id="serviceDonut" class="donut-wrap"></div></article><article class="card"><div class="card-head"><div><h2>Рейтинг услуг</h2><p>Доход и количество выполненных записей</p></div></div><div id="serviceBars" class="service-bars"></div></article></div>
+        <article class="card table-card"><div class="table-wrap"><table><thead><tr><th>Услуга</th><th>Записей</th><th>Доход</th><th>Средний чек</th><th>Доля дохода</th></tr></thead><tbody id="servicesTable"></tbody></table></div></article>
+      </section>
 
-      <section id="behavior" class="section"><div class="eyebrow">ПОВЕДЕНИЕ КЛИЕНТОВ</div><h1>Кого вы обслуживаете</h1><p class="lead">Сложные метрики из PDF переведены на обычный язык: частота, чек, регулярность и риск ухода.</p><div class="grid two"><article class="card"><div class="card-head"><div><h2>LV-индекс</h2><p>Итоговая оценка поведения клиента, а не «статус за один дорогой визит».</p></div></div><div id="lvLegend" class="lv-legend"></div><div class="table-wrap"><table><thead><tr><th>Клиент</th><th>LV</th><th>Уровень</th><th>Рекомендация</th></tr></thead><tbody id="lvTable"></tbody></table></div></article><article class="card"><div class="card-head"><div><h2>Типы клиентов</h2><p>Поведенческие группы и их вклад в доход</p></div></div><div id="typeIncome"></div><div class="metric-note" id="gdrNote"></div></article></div><article class="card"><div class="card-head"><div><h2>Loyalty DNA</h2><p>Код показывает частоту, отмены, чек, время и интервал визитов.</p></div></div><div class="table-wrap"><table><thead><tr><th>Клиент</th><th>Username</th><th>Код</th><th>Тип</th><th>Стратегия</th></tr></thead><tbody id="dnaTable"></tbody></table></div></article></section>
+      <section id="behavior" class="section">
+        <div class="eyebrow">ПОВЕДЕНИЕ КЛИЕНТОВ</div><h1>Кого вы обслуживаете</h1><p class="lead">Метрики учитывают историю посещений, чек, регулярность и отмены — один дорогой визит не делает клиента VIP.</p>
+        <div class="grid two"><article class="card"><div class="card-head"><div><h2>LV-индекс</h2><p>Комплексная оценка ценности и лояльности</p></div></div><div id="lvLegend" class="lv-legend"></div><div class="table-wrap"><table><thead><tr><th>Клиент</th><th>LV</th><th>Уровень</th><th>Рекомендация</th></tr></thead><tbody id="lvTable"></tbody></table></div></article><article class="card"><div class="card-head"><div><h2>Типы клиентов</h2><p>Поведенческие группы и вклад в доход</p></div></div><div id="typeIncome"></div><div class="metric-note" id="gdrNote"></div></article></div>
+        <article class="card"><div class="card-head"><div><h2>Loyalty DNA</h2><p>Частота, отмены, чек, привычное время и интервал</p></div></div><div class="table-wrap"><table><thead><tr><th>Клиент</th><th>Username</th><th>Код</th><th>Тип</th><th>Стратегия</th></tr></thead><tbody id="dnaTable"></tbody></table></div></article>
+      </section>
 
-      <section id="forecast" class="section"><div class="eyebrow">ПЛАНИРОВАНИЕ</div><h1>Прогноз дохода</h1><p class="lead">Прогноз — ориентир для планирования, а не обещание будущей выручки. Чем длиннее история, тем надёжнее оценка.</p><article class="card"><div class="card-head"><div><h2>История и ближайшие месяцы</h2><p>Факт показан отдельно от расчётного прогноза.</p></div></div><div class="chart tall" id="forecastChart"></div></article><div class="grid two"><article class="card"><h2>Ближайшие месяцы</h2><div id="forecastList"></div></article><article class="card"><h2>Рекомендации</h2><div id="recommendations" class="insights"></div></article></div><article class="card"><h2>Как читать прогноз</h2><p class="muted explain">Факт — деньги по выполненным записям. Прогноз — оценка на основе прошлой динамики и текущих активных записей. Если данных меньше трёх месяцев, воспринимайте прогноз как предварительный ориентир.</p></article></section>
+      <section id="forecast" class="section">
+        <div class="eyebrow">ПЛАНИРОВАНИЕ</div><h1>Прогноз и сценарии</h1><p class="lead">Посмотрите базовый, осторожный и оптимистичный сценарии. Прогноз — ориентир, а не обещание дохода.</p>
+        <div class="scenario-switch" role="group" aria-label="Сценарий прогноза"><button data-scenario="0.85" type="button">Осторожный</button><button data-scenario="1" class="active" type="button">Базовый</button><button data-scenario="1.15" type="button">Оптимистичный</button></div>
+        <div class="kpis" id="forecastKpis"></div>
+        <article class="card spotlight"><div class="card-head"><div><h2>История и ближайшие месяцы</h2><p>Сплошная линия — факт, пунктир — выбранный сценарий</p></div></div><div class="chart-legend"><span><i class="legend-line fact"></i><b>Факт</b></span><span><i class="legend-line prediction"></i><b>Прогноз</b></span></div><div class="chart tall line-chart" id="forecastChart"></div></article>
+        <div class="grid two"><article class="card"><div class="card-head"><div><h2>Покрытие прогноза записями</h2><p>Какая часть ожидаемого дохода уже подтверждена</p></div></div><div id="forecastCoverage" class="plan-fact"></div></article><article class="card"><div class="card-head"><div><h2>Динамика услуг</h2><p>Последние 60 дней против предыдущих 60</p></div></div><div id="serviceMomentum"></div></article></div>
+        <div class="grid two"><article class="card"><h2>Ближайшие месяцы</h2><div id="forecastList"></div></article><article class="card"><h2>Рекомендации</h2><div id="recommendations" class="insights"></div></article></div>
+        <article class="card"><h2>Как читать прогноз</h2><p class="muted explain">Факт формируется только из выполненных записей. Подтверждённые будущие записи показывают уже обеспеченную часть выручки. Расчётный прогноз продолжает историческую динамику; чем больше месяцев накоплено, тем надёжнее ориентир.</p></article>
+      </section>
     </main>
   </div>
-  <div id="clientModal" class="modal" aria-hidden="true"><div class="modal-box"><button class="modal-close" id="closeModal">×</button><div id="clientModalContent"></div></div></div>
-  <div id="toast" class="toast"></div>
+  <div id="clientModal" class="modal" aria-hidden="true"><div class="modal-box"><button class="modal-close" data-close-modal="clientModal" type="button" aria-label="Закрыть">×</button><div id="clientModalContent"></div></div></div>
+  <div id="drillModal" class="modal" aria-hidden="true"><div class="modal-box wide-modal"><button class="modal-close" data-close-modal="drillModal" type="button" aria-label="Закрыть">×</button><div id="drillModalContent"></div></div></div>
+  <div id="toast" class="toast" role="status"></div>
   <script src="app.js"></script>
 </body>
 </html>
