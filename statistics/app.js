@@ -113,6 +113,7 @@ let page = 1;
 let perPage = 12;
 let sleepDays = 60;
 let forecastScenario = 1;
+let separatePrepayment = localStorage.getItem("aethelStatsSeparatePrepayment") === "1";
 const drillGroups = new Map();
 
 function get(...keys) {
@@ -157,20 +158,6 @@ function normalizedAppointments() {
     const status = normalizeStatus(item.status ?? item.Status, datetime);
     const prepayment = num(item.prepayment ?? item.Prepayment);
     const paymentId = item.payment_id ?? item.PaymentId ?? null;
-    const paymentStatus = String(item.prepayment_status || item.payment_status || "").toLowerCase();
-    const explicitlyUnpaid = ["unpaid", "not_paid", "не оплачена"].includes(paymentStatus);
-    const explicitlyPaid = item.prepayment_paid === true || ["paid", "confirmed", "оплачена"].includes(paymentStatus);
-    const confirmedByStatus = status === "upcoming" || status === "completed";
-    const prepaymentPaid = prepayment > 0 && !explicitlyUnpaid && (
-      Boolean(paymentId) || explicitlyPaid || confirmedByStatus
-    );
-    const prepaymentSource = Boolean(paymentId)
-      ? "online"
-      : prepaymentPaid
-        ? "manual"
-        : status === "pending"
-          ? "pending"
-          : "none";
     return {
       ...item,
       id: item.id ?? item.appointment_id ?? item.Appointments_id,
@@ -185,8 +172,6 @@ function normalizedAppointments() {
       price: num(item.price ?? item.amount ?? item.Price),
       prepayment,
       payment_id: paymentId,
-      prepayment_paid: prepaymentPaid,
-      prepayment_source: prepaymentSource,
       status,
       client_note: item.client_note || "",
       appointment_note: item.appointment_note || "",
@@ -194,6 +179,18 @@ function normalizedAppointments() {
       comment_photos: Array.isArray(item.comment_photos) ? item.comment_photos : []
     };
   });
+}
+
+function revenueOf(item) {
+  const base = num(item?.price ?? item?.amount ?? item?.Price);
+  const prepayment = num(item?.prepayment ?? item?.Prepayment);
+  return base + (separatePrepayment ? prepayment : 0);
+}
+
+function prepaymentAccountingText() {
+  return separatePrepayment
+    ? "Предоплата добавляется к цене услуги как отдельная часть выручки."
+    : "Предоплата считается частью полной цены услуги и отдельно к выручке не прибавляется.";
 }
 
 function normalizedClients() {
@@ -234,8 +231,10 @@ function normalizedClients() {
     const intervals = visitDates.slice(1).map((d, index) => Math.round((d - visitDates[index]) / 86400000));
     const lastVisit = client.last_visit || client.last_date || (visitDates.at(-1) ? isoDate(visitDates.at(-1)) : null);
     const age = daysAgo(lastVisit);
-    const visits = client.visits ?? client.total ?? client.total_visits ?? client.visit_count ?? completed.length;
-    const spent = client.spent ?? client.total_spent ?? completed.reduce((sum, item) => sum + item.price, 0);
+    const visits = completed.length || num(client.visits ?? client.total ?? client.total_visits ?? client.visit_count);
+    const spent = completed.length
+      ? completed.reduce((sum, item) => sum + revenueOf(item), 0)
+      : num(client.spent ?? client.total_spent);
     const next = rows.filter((item) => item.status === "upcoming").sort((a, b) => String(a.datetime).localeCompare(String(b.datetime)))[0];
     let segment = client.segment;
     if (!segment || segment === "all" || ["new", "loyal", "sleeping", "lost"].includes(segment) === false) {
@@ -269,7 +268,7 @@ function serviceData() {
     completed.forEach((item) => {
       const row = map.get(item.service) || { service: item.service, count: 0, income: 0 };
       row.count += 1;
-      row.income += item.price;
+      row.income += revenueOf(item);
       map.set(item.service, row);
     });
     return [...map.values()].sort((a, b) => b.income - a.income);
@@ -289,7 +288,7 @@ function rawStats() {
     total_income: 0, avg_check: 0, ...source
   };
   const completed = appointments.filter((item) => item.status === "completed");
-  const income = completed.reduce((sum, item) => sum + item.price, 0);
+  const income = completed.reduce((sum, item) => sum + revenueOf(item), 0);
   return {
     ...source,
     total_appointments: appointments.length,
@@ -388,7 +387,8 @@ function drawLineChart(target, labels, series, drillPrefix = "") {
     }
     lines += '<path class="chart-line ' + (line.dashed ? "is-forecast" : "is-fact") + '" style="--series:' + line.color + '" d="' + path + '"></path>';
     points.forEach((point) => {
-      const key = drillPrefix ? drillPrefix + ":" + (line.keys?.[point.index] || labels[point.index]) : "";
+      const pointPrefix = line.drillPrefix ?? drillPrefix;
+      const key = pointPrefix ? pointPrefix + ":" + (line.keys?.[point.index] || labels[point.index]) : "";
       lines += '<g class="chart-point" ' + (key ? 'data-drill="' + esc(key) + '" role="button" tabindex="0"' : "") + '>' +
         '<circle cx="' + point.x + '" cy="' + point.y + '" r="10" class="point-hit"></circle>' +
         '<circle cx="' + point.x + '" cy="' + point.y + '" r="4.5" style="--series:' + line.color + '"></circle>' +
@@ -416,11 +416,7 @@ function drawBars(target, data, formatter = money, drillPrefix = "") {
 
 function paymentLabel(item) {
   if (!item.prepayment) return '<span class="payment neutral">Не требуется</span>';
-  if (item.prepayment_source === "online") return '<span class="payment paid">Оплачена онлайн</span>';
-  if (item.prepayment_paid) return '<span class="payment paid">Внесена · подтверждено</span>';
-  if (item.status === "pending") return '<span class="payment waiting">Ожидает подтверждения</span>';
-  if (item.status === "cancelled") return '<span class="payment neutral">Запись отменена</span>';
-  return '<span class="payment waiting">Статус не указан</span>';
+  return '<span class="payment neutral">Сумма задана в услуге · факт оплаты не отслеживается</span>';
 }
 
 function statusLabel(status) {
@@ -453,28 +449,31 @@ function actionButtons(item) {
 function monthFinance() {
   const appointments = allAppointments();
   const month = isoDate(new Date()).slice(0, 7);
-  const fact = appointments.filter((item) => item.status === "completed" && String(item.datetime).slice(0, 7) === month).reduce((sum, item) => sum + item.price, 0);
-  const booked = appointments.filter((item) => item.status === "upcoming" && String(item.datetime).slice(0, 7) === month).reduce((sum, item) => sum + item.price, 0);
-  const prepaid = appointments.filter((item) => item.status === "upcoming" && item.prepayment_paid && String(item.datetime).slice(0, 7) === month).reduce((sum, item) => sum + item.prepayment, 0);
-  const serverForecast = num(get("total_stats")?.current_month_forecast ?? get("current_month_forecast"));
-  return { month, fact, booked, prepaid, forecast: Math.max(fact + booked, serverForecast) };
+  const fact = appointments.filter((item) => item.status === "completed" && String(item.datetime).slice(0, 7) === month).reduce((sum, item) => sum + revenueOf(item), 0);
+  const booked = appointments.filter((item) => item.status === "upcoming" && String(item.datetime).slice(0, 7) === month).reduce((sum, item) => sum + revenueOf(item), 0);
+  const configuredPrepayment = appointments.filter((item) => item.status === "upcoming" && String(item.datetime).slice(0, 7) === month).reduce((sum, item) => sum + item.prepayment, 0);
+  const localForecast = baseForecast().find((item) => item.key === month)?.value || 0;
+  const serverForecast = appointments.length ? 0 : num(get("total_stats")?.current_month_forecast ?? get("current_month_forecast"));
+  return { month, fact, booked, configuredPrepayment, forecast: Math.max(fact + booked, localForecast, serverForecast) };
 }
 
 function revenueTimeline(unit) {
   const appointments = allAppointments();
-  const actual = aggregateRows(appointments.filter((item) => item.status === "completed"), unit, (item) => item.price);
-  const confirmed = aggregateRows(appointments.filter((item) => item.status === "upcoming"), unit, (item) => item.price);
+  const actual = aggregateRows(appointments.filter((item) => item.status === "completed"), unit, revenueOf);
+  const confirmed = aggregateRows(appointments.filter((item) => item.status === "upcoming"), unit, revenueOf);
   const actualMap = new Map(actual.map((item) => [item.key, item]));
   const forecastMap = new Map(confirmed.map((item) => [item.key, item]));
   if (unit === "month") {
-    const months = get("forecast_months") || [];
-    const values = get("forecast") || [];
-    months.forEach((key, index) => {
+    const forecastSeries = appointments.length
+      ? baseForecast()
+      : (get("forecast_months") || []).map((key, index) => ({ key, value: num((get("forecast") || [])[index]) }));
+    forecastSeries.forEach((forecastItem) => {
+      const key = forecastItem.key;
       const existing = forecastMap.get(key);
       forecastMap.set(key, {
         key,
         label: monthText(key),
-        value: Math.max(num(values[index]), existing?.value || 0),
+        value: Math.max(num(forecastItem.value), existing?.value || 0),
         rows: existing?.rows || []
       });
     });
@@ -483,7 +482,7 @@ function revenueTimeline(unit) {
       key: current.month,
       label: monthText(current.month),
       value: current.forecast,
-      rows: appointments.filter((item) => String(item.datetime).slice(0, 7) === current.month)
+      rows: appointments.filter((item) => item.status === "upcoming" && String(item.datetime).slice(0, 7) === current.month)
     });
   }
   const keys = [...new Set([...actualMap.keys(), ...forecastMap.keys()])].sort();
@@ -492,9 +491,17 @@ function revenueTimeline(unit) {
   visible.forEach((key) => {
     const actualRow = actualMap.get(key);
     const forecastRow = forecastMap.get(key);
-    drillGroups.set("overview:" + key, {
-      title: groupLabel(key, unit),
-      rows: [...(actualRow?.rows || []), ...(forecastRow?.rows || [])]
+    drillGroups.set("overview-actual:" + key, {
+      title: groupLabel(key, unit) + " · фактический доход",
+      rows: actualRow?.rows || [],
+      value: actualRow?.value || 0,
+      note: "В сумму входят только выполненные записи."
+    });
+    drillGroups.set("overview-forecast:" + key, {
+      title: groupLabel(key, unit) + " · ожидаемый доход",
+      rows: forecastRow?.rows || [],
+      value: forecastRow?.value || 0,
+      note: "Сумма в заголовке — прогноз. В списке показаны конкретные подтверждённые записи, поэтому их сумма может быть ниже прогноза."
     });
   });
   return {
@@ -509,9 +516,9 @@ function renderOverviewIncome() {
   const unit = $("#incomePeriod")?.value || "month";
   const timeline = revenueTimeline(unit);
   drawLineChart("#incomeChart", timeline.labels, [
-    { name: "Факт", color: "#9b82ff", values: timeline.actual, keys: timeline.keys },
-    { name: "Прогноз", color: "#ff74b2", values: timeline.forecast, keys: timeline.keys, dashed: true }
-  ], "overview");
+    { name: "Факт", color: "#9b82ff", values: timeline.actual, keys: timeline.keys, drillPrefix: "overview-actual" },
+    { name: "Прогноз", color: "#ff74b2", values: timeline.forecast, keys: timeline.keys, dashed: true, drillPrefix: "overview-forecast" }
+  ]);
 }
 
 function renderSegments(clients) {
@@ -551,7 +558,7 @@ function renderInsights(stats, clients, appointments) {
 function renderUpcoming(appointments) {
   const rows = appointments.filter((item) => item.status === "upcoming").sort((a, b) => String(a.datetime).localeCompare(String(b.datetime))).slice(0, 5);
   $("#upcomingMini").innerHTML = rows.length ? rows.map((item) =>
-    '<button class="upcoming-item" type="button" data-appointment="' + esc(item.id) + '"><span><b>' + esc(item.client) + '</b><small>' + esc(item.service) + '</small></span><span><i>' + dateTimeText(item.datetime) + '</i><b>' + money(item.price) + '</b></span></button>'
+    '<button class="upcoming-item" type="button" data-appointment="' + esc(item.id) + '"><span><b>' + esc(item.client) + '</b><small>' + esc(item.service) + '</small></span><span><i>' + dateTimeText(item.datetime) + '</i><b>' + money(revenueOf(item)) + '</b></span></button>'
   ).join("") : emptyState("Будущих подтверждённых записей пока нет.");
 }
 
@@ -616,39 +623,174 @@ function renderAppointments(rows) {
     pending: rows.filter((item) => item.status === "pending").length,
     cancelled: rows.filter((item) => item.status === "cancelled").length
   };
-  const paid = rows.filter((item) => item.prepayment_paid).reduce((sum, item) => sum + item.prepayment, 0);
-  $("#appointmentSubstats").innerHTML = '<span class="substat">Всего <b>' + rows.length + '</b></span><span class="substat">Выполнено <b>' + counts.completed + '</b></span><span class="substat">Подтверждено <b>' + counts.upcoming + '</b></span><span class="substat">Ожидают <b>' + counts.pending + '</b></span><span class="substat">Предоплаты <b>' + money(paid) + "</b></span>";
+  const configuredPrepayment = rows.reduce((sum, item) => sum + item.prepayment, 0);
+  $("#appointmentSubstats").innerHTML = '<span class="substat">Всего <b>' + rows.length + '</b></span><span class="substat">Выполнено <b>' + counts.completed + '</b></span><span class="substat">Подтверждено <b>' + counts.upcoming + '</b></span><span class="substat">Ожидают <b>' + counts.pending + '</b></span><span class="substat">Предоплата по настройкам <b>' + money(configuredPrepayment) + "</b></span>";
   const pages = Math.max(1, Math.ceil(rows.length / perPage));
   page = Math.min(Math.max(1, page), pages);
   const slice = rows.slice((page - 1) * perPage, page * perPage);
   $("#appointmentsTable").innerHTML = slice.map((item) =>
-    "<tr><td>" + dateTimeText(item.datetime) + "</td><td>" + clientProfile({ ...item, name: item.client }) + "</td><td><button class=\"table-link\" type=\"button\" data-appointment=\"" + esc(item.id) + "\">" + esc(item.service) + "</button>" + (item.client_note || item.appointment_note || item.comment_text ? '<br><small class="muted">Есть заметка</small>' : "") + "</td><td><b>" + money(item.price) + "</b></td><td>" + (item.prepayment ? money(item.prepayment) + "<br>" + paymentLabel(item) : paymentLabel(item)) + '</td><td><span class="status ' + item.status + '">' + statusLabel(item.status) + '</span></td><td><button class="icon-button" type="button" data-appointment="' + esc(item.id) + '">•••</button></td></tr>'
+    "<tr><td>" + dateTimeText(item.datetime) + "</td><td>" + clientProfile({ ...item, name: item.client }) + "</td><td><button class=\"table-link\" type=\"button\" data-appointment=\"" + esc(item.id) + "\">" + esc(item.service) + "</button>" + (item.client_note || item.appointment_note || item.comment_text ? '<br><small class="muted">Есть заметка</small>' : "") + "</td><td><b>" + money(revenueOf(item)) + "</b></td><td>" + (item.prepayment ? money(item.prepayment) + "<br>" + paymentLabel(item) : paymentLabel(item)) + '</td><td><span class="status ' + item.status + '">' + statusLabel(item.status) + '</span></td><td><button class="icon-button" type="button" data-appointment="' + esc(item.id) + '">•••</button></td></tr>'
   ).join("") || '<tr><td colspan="7" class="muted">Записей не найдено</td></tr>';
   $("#appointmentsCards").innerHTML = slice.map((item) =>
-    '<article class="mobile-card appointment-card" data-appointment="' + esc(item.id) + '"><div class="mobile-card-head"><span><small>' + dateTimeText(item.datetime) + '</small><b>' + esc(item.service) + '</b></span><span class="status ' + item.status + '">' + statusLabel(item.status) + '</span></div>' + clientProfile({ ...item, name: item.client }) + '<div class="mobile-stats"><span><small>Стоимость</small><b>' + money(item.price) + '</b></span><span><small>Предоплата</small><b>' + (item.prepayment ? money(item.prepayment) : "Не требуется") + '</b></span></div><div class="payment-row">' + paymentLabel(item) + "</div></article>"
+    '<article class="mobile-card appointment-card" data-appointment="' + esc(item.id) + '"><div class="mobile-card-head"><span><small>' + dateTimeText(item.datetime) + '</small><b>' + esc(item.service) + '</b></span><span class="status ' + item.status + '">' + statusLabel(item.status) + '</span></div>' + clientProfile({ ...item, name: item.client }) + '<div class="mobile-stats"><span><small>Доход по режиму</small><b>' + money(revenueOf(item)) + '</b></span><span><small>Предоплата</small><b>' + (item.prepayment ? money(item.prepayment) : "Не требуется") + '</b></span></div><div class="payment-row">' + paymentLabel(item) + "</div></article>"
   ).join("") || emptyState("Записей не найдено.");
   $("#pageInfo").textContent = page + " / " + pages;
   $("#pageInfoMobile").textContent = page + " / " + pages;
 }
 
+function buildBehaviorMetrics(clients) {
+  const appointments = allAppointments();
+  const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
+  const rowsByUser = new Map();
+  appointments.forEach((item) => {
+    if (item.user_id === undefined || item.user_id === null) return;
+    const key = String(item.user_id);
+    if (!rowsByUser.has(key)) rowsByUser.set(key, []);
+    rowsByUser.get(key).push(item);
+  });
+
+  const base = clients.map((client) => {
+    const rows = rowsByUser.get(String(client.user_id)) || [];
+    const completed = rows.filter((item) => item.status === "completed");
+    const cancelled = rows.filter((item) => item.status === "cancelled");
+    const visits = completed.length;
+    const spent = completed.reduce((sum, item) => sum + revenueOf(item), 0);
+    const uniqueDates = [...new Set(completed.map((item) => String(item.datetime || "").slice(0, 10)).filter(Boolean))]
+      .sort().map(localDate).filter(Boolean);
+    const intervals = uniqueDates.slice(1).map((date, index) => Math.max(0, Math.round((date - uniqueDates[index]) / 86400000)));
+    const avgInterval = intervals.length ? intervals.reduce((sum, value) => sum + value, 0) / intervals.length : null;
+    const lastVisit = uniqueDates.at(-1) || null;
+    const daysSinceLast = lastVisit ? Math.max(0, Math.floor((Date.now() - lastVisit.getTime()) / 86400000)) : null;
+    const interactions = visits + cancelled.length;
+    const cancelRate = interactions ? cancelled.length / interactions : 0;
+    const hours = completed.map((item) => localDate(item.datetime)?.getHours()).filter((hour) => Number.isFinite(hour));
+    const avgHour = hours.length ? hours.reduce((sum, hour) => sum + hour, 0) / hours.length : null;
+    return { client, rows, completed, cancelled, visits, spent, intervals, avgInterval, daysSinceLast, interactions, cancelRate, avgHour };
+  }).filter((item) => item.visits > 0);
+
+  const maxSpent = Math.max(...base.map((item) => item.spent), 1);
+  const sortedSpent = base.map((item) => item.spent).sort((a, b) => a - b);
+  const q75 = sortedSpent.length ? sortedSpent[Math.floor((sortedSpent.length - 1) * .75)] : 0;
+
+  const lv = [];
+  const dna = [];
+  const typeIncome = {};
+
+  base.forEach((item) => {
+    const visitScore = clamp((item.visits - 1) / 7);
+    const expectedInterval = item.avgInterval || 45;
+    const recencyGrace = clamp(expectedInterval * 1.35, 30, 90);
+    let recencyScore = 0;
+    if (item.daysSinceLast === null) recencyScore = 0;
+    else if (item.daysSinceLast <= recencyGrace) recencyScore = 1;
+    else if (item.daysSinceLast <= Math.max(90, recencyGrace * 2)) recencyScore = .62;
+    else if (item.daysSinceLast <= 180) recencyScore = .28;
+
+    const reliabilityScore = (item.visits + 1) / Math.max(1, item.visits + item.cancelled.length + 2);
+    let regularityScore = 0;
+    if (item.intervals.length === 1) regularityScore = .4;
+    if (item.intervals.length >= 2) {
+      const mean = item.avgInterval || 1;
+      const variance = item.intervals.reduce((sum, value) => sum + (value - mean) ** 2, 0) / item.intervals.length;
+      const cv = Math.sqrt(variance) / Math.max(mean, 1);
+      regularityScore = clamp(1 - cv, .15, 1);
+    }
+    const valueScore = clamp(Math.sqrt(item.spent / maxSpent));
+    const score = Math.round(
+      visitScore * 40 +
+      recencyScore * 15 +
+      reliabilityScore * 20 +
+      regularityScore * 10 +
+      valueScore * 15
+    );
+
+    const riskThreshold = Math.max(75, expectedInterval * 2.2);
+    let clientType;
+    if (item.daysSinceLast !== null && item.daysSinceLast >= 180) clientType = "Ушедший клиент";
+    else if (item.daysSinceLast !== null && item.daysSinceLast > riskThreshold) clientType = "Риск ухода";
+    else if (item.interactions >= 3 && item.cancelRate >= .35) clientType = "Частые отмены";
+    else if (item.visits <= 1) clientType = "Новый клиент";
+    else if (item.visits >= 8 && item.spent >= q75) clientType = "Ключевой клиент";
+    else if (item.visits >= 5) clientType = "Постоянный клиент";
+    else clientType = "Возвращающийся клиент";
+
+    let level;
+    let recommendation;
+    if (clientType === "Ушедший клиент") {
+      level = "Ценный, но ушёл";
+      recommendation = "Вернуть персональным предложением и удобным окном";
+    } else if (clientType === "Риск ухода") {
+      level = "Риск ухода";
+      recommendation = "Напомнить о записи до выпадения клиента из привычного цикла";
+    } else if (clientType === "Частые отмены") {
+      level = "Нестабильный";
+      recommendation = "Подтверждать визит заранее и использовать предоплату";
+    } else if (score >= 85) {
+      level = "Ядро базы";
+      recommendation = "Удерживать: приоритетные окна, персональное внимание, ранняя запись";
+    } else if (score >= 70) {
+      level = "Очень лояльный";
+      recommendation = "Поддерживать регулярность и предлагать следующую запись заранее";
+    } else if (score >= 55) {
+      level = "Постоянный";
+      recommendation = "Закрепить привычный интервал между визитами";
+    } else if (score >= 40) {
+      level = "Развивающийся";
+      recommendation = "Главная цель — увеличить число повторных визитов";
+    } else {
+      level = "Новый / нестабильный";
+      recommendation = "Довести клиента до второго подтверждённого визита";
+    }
+
+    const timeLabel = item.avgHour === null ? "время —" : item.avgHour < 12 ? "утро" : item.avgHour >= 17 ? "вечер" : "день";
+    const intervalLabel = item.avgInterval ? "~" + Math.round(item.avgInterval) + " дн." : "интервал —";
+    const profile = item.visits + " виз. · " + Math.round(item.cancelRate * 100) + "% отмен · " + intervalLabel + " · " + timeLabel;
+
+    const common = {
+      user_id: item.client.user_id,
+      name: item.client.name,
+      phone: item.client.phone,
+      username: item.client.username,
+      telegram_url: item.client.telegram_url
+    };
+    lv.push({ ...common, lv: score, level, rec: recommendation });
+    dna.push({ ...common, dna_code: profile, client_type: clientType, strategy: recommendation });
+    typeIncome[clientType] = (typeIncome[clientType] || 0) + item.spent;
+  });
+
+  const totalIncome = Object.values(typeIncome).reduce((sum, value) => sum + value, 0);
+  const gdr = totalIncome > 0
+    ? 1 - Object.values(typeIncome).reduce((sum, value) => sum + (value / totalIncome) ** 2, 0)
+    : null;
+  return { lv, dna, typeIncome, gdr };
+}
+
 function renderBehavior(clients) {
-  const lv = get("lv_scores") || clients.filter((item) => item.lv !== undefined);
-  const dna = get("dna_clients") || clients.filter((item) => item.dna_code);
-  $("#lvLegend").innerHTML = '<span class="lv-pill lv-high">70+ · VIP</span><span class="lv-pill lv-mid">50–69 · перспективный</span><span class="lv-pill lv-low">до 49 · требует внимания</span>';
+  const behavior = buildBehaviorMetrics(clients);
+  const lv = behavior.lv;
+  const dna = behavior.dna;
+  $("#lvLegend").innerHTML = '<span class="lv-pill lv-high">85+ · ядро базы</span><span class="lv-pill lv-mid">70–84 · очень лояльный</span><span class="lv-pill lv-low">40–69 · развивается / требует внимания</span>';
   $("#lvTable").innerHTML = lv.slice().sort((a, b) => num(b.lv) - num(a.lv)).map((item) =>
-    "<tr><td>" + clientProfile(item) + "</td><td><b>" + num(item.lv) + "%</b></td><td>" + esc(item.level || "—") + '</td><td class="muted">' + esc(item.rec || item.recommendation || "—") + "</td></tr>"
-  ).join("") || '<tr><td colspan="4" class="muted">LV появится после накопления истории.</td></tr>';
-  const typeIncome = get("type_income") || {};
-  const total = Object.values(typeIncome).reduce((sum, value) => sum + num(value), 0);
+    "<tr><td>" + clientProfile(item) + "</td><td><b>" + num(item.lv) + "%</b></td><td>" + esc(item.level || "—") + '</td><td class="muted">' + esc(item.rec || "—") + "</td></tr>"
+  ).join("") || '<tr><td colspan="4" class="muted">LV появится после первой выполненной записи.</td></tr>';
+
+  const typeIncome = behavior.typeIncome;
   const max = Math.max(...Object.values(typeIncome).map(num), 1);
   $("#typeIncome").innerHTML = Object.entries(typeIncome).filter(([, value]) => num(value) > 0).sort((a, b) => b[1] - a[1]).map(([name, value]) =>
     '<div class="type-row"><span>' + esc(name) + '</span><div class="bar"><i style="width:' + (num(value) / max * 100) + '%"></i></div><b>' + money(value) + "</b></div>"
-  ).join("") || emptyState("Типы появятся после накопления данных.");
-  const gdr = num(get("gdr"));
-  $("#gdrNote").innerHTML = gdr ? "Разнообразие клиентской базы: <b>" + gdr.toFixed(2) + "</b>. " + (gdr < 0.4 ? "Доход зависит от небольшого числа типов клиентов." : "Доход распределён достаточно устойчиво.") : "Метрика разнообразия пока недоступна.";
+  ).join("") || emptyState("Типы появятся после выполненных записей.");
+
+  if (behavior.gdr === null) {
+    $("#gdrNote").innerHTML = "Метрика устойчивости появится после накопления выполненных записей.";
+  } else {
+    const gdr = behavior.gdr;
+    $("#gdrNote").innerHTML = "Устойчивость структуры дохода: <b>" + gdr.toFixed(2) + "</b>. " +
+      (gdr < .25 ? "Доход сильно сосредоточен в одной группе клиентов." : gdr < .5 ? "Есть заметная зависимость от нескольких групп." : "Доход распределён между группами достаточно устойчиво.");
+  }
+
   $("#dnaTable").innerHTML = dna.map((item) =>
     "<tr><td>" + clientProfile(item) + "</td><td>" + esc(usernameOf(item) || "—") + '</td><td class="dna-code">' + esc(item.dna_code || "—") + "</td><td>" + esc(item.client_type || "—") + '</td><td class="muted">' + esc(item.strategy || "—") + "</td></tr>"
-  ).join("") || '<tr><td colspan="5" class="muted">Loyalty DNA появится после накопления данных.</td></tr>';
+  ).join("") || '<tr><td colspan="5" class="muted">Профиль поведения появится после первой выполненной записи.</td></tr>';
 }
 
 function analyticsRows() {
@@ -688,21 +830,21 @@ function renderAnalytics() {
     groups.set(key, bucket);
   });
   const data = [...groups.values()].map((bucket) => {
-    const total = bucket.rows.reduce((sum, item) => sum + item.price, 0);
+    const total = bucket.rows.reduce((sum, item) => sum + revenueOf(item), 0);
     const value = metric === "appointments"
       ? bucket.rows.length
       : metric === "avg_check"
         ? total / Math.max(bucket.rows.length, 1)
         : metric === "prepayment"
-          ? bucket.rows.filter((item) => item.prepayment_paid).reduce((sum, item) => sum + item.prepayment, 0)
+          ? bucket.rows.reduce((sum, item) => sum + item.prepayment, 0)
           : total;
     drillGroups.set("analytics:" + bucket.key, { title: bucket.label, rows: bucket.rows });
     return { ...bucket, value };
   }).sort((a, b) => group === "service" ? b.value - a.value : String(a.key).localeCompare(String(b.key)));
   const formatter = metric === "appointments" ? (value) => String(value) : money;
-  const totalIncome = rows.reduce((sum, item) => sum + item.price, 0);
-  const totalPrepayment = rows.filter((item) => item.prepayment_paid).reduce((sum, item) => sum + item.prepayment, 0);
-  $("#analyticsSummary").innerHTML = '<span class="substat">Записей <b>' + rows.length + '</b></span><span class="substat">Сумма <b>' + money(totalIncome) + '</b></span><span class="substat">Средний чек <b>' + money(totalIncome / Math.max(rows.length, 1)) + '</b></span><span class="substat">Предоплаты <b>' + money(totalPrepayment) + "</b></span>";
+  const totalIncome = rows.reduce((sum, item) => sum + revenueOf(item), 0);
+  const totalPrepayment = rows.reduce((sum, item) => sum + item.prepayment, 0);
+  $("#analyticsSummary").innerHTML = '<span class="substat">Записей <b>' + rows.length + '</b></span><span class="substat">Сумма <b>' + money(totalIncome) + '</b></span><span class="substat">Средний чек <b>' + money(totalIncome / Math.max(rows.length, 1)) + '</b></span><span class="substat">Предоплата по настройкам <b>' + money(totalPrepayment) + "</b></span>";
   if (view === "table") {
     $("#analyticsChart").innerHTML = '<div class="analytics-table"><div class="analytics-table-head"><span>Группа</span><span>Значение</span><span>Записей</span></div>' + data.map((item) =>
       '<button type="button" data-drill="analytics:' + esc(item.key) + '"><span>' + esc(item.label) + '</span><b>' + formatter(item.value) + '</b><small>' + item.rows.length + "</small></button>"
@@ -720,25 +862,39 @@ function renderAnalytics() {
 }
 
 function monthlyHistory() {
+  const completed = allAppointments().filter((item) => item.status === "completed");
+  if (completed.length) {
+    const raw = aggregateRows(completed, "month", revenueOf).map((item) => ({ key: item.key, value: item.value }));
+    if (!raw.length) return [];
+    const map = new Map(raw.map((item) => [item.key, item.value]));
+    const start = localDate(raw[0].key + "-01");
+    const end = localDate(raw.at(-1).key + "-01");
+    const filled = [];
+    const cursor = new Date(start);
+    let guard = 0;
+    while (cursor <= end && guard < 120) {
+      const key = isoDate(cursor).slice(0, 7);
+      filled.push({ key, value: map.get(key) || 0 });
+      cursor.setMonth(cursor.getMonth() + 1);
+      guard += 1;
+    }
+    return filled;
+  }
   const reportMonths = get("historical_months") || [];
   const reportValues = get("historical_values") || [];
-  if (reportMonths.length) return reportMonths.map((key, index) => ({ key, value: num(reportValues[index]) }));
-  return aggregateRows(allAppointments().filter((item) => item.status === "completed"), "month", (item) => item.price).map((item) => ({ key: item.key, value: item.value }));
+  return reportMonths.map((key, index) => ({ key, value: num(reportValues[index]) }));
 }
 
 function baseForecast() {
-  const months = get("forecast_months") || [];
-  const values = get("forecast") || [];
-  if (months.length) return months.map((key, index) => ({ key, value: num(values[index]) }));
-  const history = monthlyHistory();
+  const currentMonth = isoDate(new Date()).slice(0, 7);
+  const history = monthlyHistory().filter((item) => item.key < currentMonth).slice(-6);
   if (history.length < 2) return [];
-  const recent = history.slice(-6);
-  const trend = (recent.at(-1).value - recent[0].value) / Math.max(1, recent.length - 1);
-  const lastDate = localDate(recent.at(-1).key + "-01");
+  const trend = (history.at(-1).value - history[0].value) / Math.max(1, history.length - 1);
+  const lastDate = localDate(history.at(-1).key + "-01");
   return [1, 2, 3].map((step) => {
     const d = new Date(lastDate);
     d.setMonth(d.getMonth() + step);
-    return { key: isoDate(d).slice(0, 7), value: Math.max(0, recent.at(-1).value + trend * step) };
+    return { key: isoDate(d).slice(0, 7), value: Math.max(0, history.at(-1).value + trend * step) };
   });
 }
 
@@ -755,18 +911,17 @@ function renderForecast() {
   const next = forecast[0]?.value || 0;
   const last = history.at(-1)?.value || 0;
   const growth = last ? (next - last) / last * 100 : 0;
-  const booked = allAppointments().filter((item) => item.status === "upcoming").reduce((sum, item) => sum + item.price, 0);
-  const reliability = Math.min(92, 40 + history.length * 6);
+  const booked = allAppointments().filter((item) => item.status === "upcoming").reduce((sum, item) => sum + revenueOf(item), 0);
   $("#forecastKpis").innerHTML = [
     metricKpi("Следующий месяц", money(next), forecastScenario === 1 ? "базовый сценарий" : forecastScenario < 1 ? "осторожный сценарий" : "оптимистичный сценарий"),
     metricKpi("Изменение", (growth >= 0 ? "+" : "") + Math.round(growth) + "%", "к последнему факту"),
     metricKpi("Уже подтверждено", money(booked), "будущие записи"),
-    metricKpi("Надёжность ориентира", reliability + "%", history.length + " мес. истории")
+    metricKpi("История для прогноза", history.length + " мес.", "чем больше полных месяцев, тем устойчивее ориентир")
   ].join("");
   $("#forecastList").innerHTML = forecast.length ? forecast.map((item) =>
     '<button class="forecast-row" type="button" data-forecast-month="' + item.key + '"><span>' + monthText(item.key) + '</span><b>' + money(item.value) + "</b></button>"
   ).join("") : emptyState("Нужно минимум два месяца истории.");
-  const confirmedByMonth = aggregateRows(allAppointments().filter((item) => item.status === "upcoming"), "month", (item) => item.price);
+  const confirmedByMonth = aggregateRows(allAppointments().filter((item) => item.status === "upcoming"), "month", revenueOf);
   $("#forecastCoverage").innerHTML = forecast.length ? forecast.map((item) => {
     const confirmed = confirmedByMonth.find((row) => row.key === item.key)?.value || 0;
     const percent = Math.min(100, item.value ? confirmed / item.value * 100 : 0);
@@ -780,7 +935,7 @@ function renderForecast() {
     const d = localDate(item.datetime);
     if (!d || d < previousStart) return;
     const row = serviceMap.get(item.service) || { current: 0, previous: 0 };
-    if (d >= currentStart) row.current += item.price; else row.previous += item.price;
+    if (d >= currentStart) row.current += revenueOf(item); else row.previous += revenueOf(item);
     serviceMap.set(item.service, row);
   });
   $("#serviceMomentum").innerHTML = [...serviceMap.entries()].sort((a, b) => b[1].current - a[1].current).slice(0, 6).map(([service, values]) => {
@@ -812,10 +967,15 @@ function renderFinance() {
   const scale = Math.max(month.fact, month.forecast, 1);
   $("#planFact").innerHTML = '<div class="plan-row"><span>Факт</span><div class="plan-line"><i style="width:' + (month.fact / scale * 100) + '%"></i></div><b>' + money(month.fact) + '</b></div><div class="plan-row"><span>Прогноз</span><div class="plan-line forecast-line"><i style="width:' + (month.forecast / scale * 100) + '%"></i></div><b>' + money(month.forecast) + "</b></div>";
   const future = appointments.filter((item) => item.status === "upcoming" && item.prepayment > 0);
-  const paid = future.filter((item) => item.prepayment_paid).reduce((sum, item) => sum + item.prepayment, 0);
-  const total = future.reduce((sum, item) => sum + item.prepayment, 0);
-  $("#prepaymentSummary").innerHTML = '<div class="plan-row"><span>Подтверждено</span><div class="plan-line"><i style="width:' + (total ? paid / total * 100 : 0) + '%"></i></div><b>' + money(paid) + '</b></div><div class="plan-row"><span>Ожидает</span><div class="plan-line waiting-line"><i style="width:' + (total ? (total - paid) / total * 100 : 0) + '%"></i></div><b>' + money(Math.max(0, total - paid)) + "</b></div>";
-  const monthly = aggregateRows(appointments.filter((item) => item.status === "completed"), "month", (item) => item.price);
+  const completedWithPrepayment = appointments.filter((item) => item.status === "completed" && item.prepayment > 0);
+  const futureConfigured = future.reduce((sum, item) => sum + item.prepayment, 0);
+  const completedConfigured = completedWithPrepayment.reduce((sum, item) => sum + item.prepayment, 0);
+  $("#prepaymentSummary").innerHTML =
+    '<div class="mode-summary"><b>' + (separatePrepayment ? 'Отдельно от цены услуги' : 'Входит в цену услуги') + '</b><span>' + esc(prepaymentAccountingText()) + '</span></div>' +
+    '<div class="plan-row"><span>В выполненных записях</span><div class="plan-line"><i style="width:100%"></i></div><b>' + money(completedConfigured) + '</b></div>' +
+    '<div class="plan-row"><span>В будущих записях</span><div class="plan-line waiting-line"><i style="width:100%"></i></div><b>' + money(futureConfigured) + '</b></div>' +
+    '<small class="muted prepayment-disclaimer">Это суммы, заданные в настройках услуг. Они не подтверждают фактическое получение или возврат денег.</small>';
+  const monthly = aggregateRows(appointments.filter((item) => item.status === "completed"), "month", revenueOf);
   monthly.forEach((item) => drillGroups.set("monthly:" + item.key, { title: item.label, rows: item.rows }));
   drawBars("#incomeChartLarge", monthly.map((item) => ({ ...item, label: monthText(item.key) })), money, "monthly");
   renderAnalytics();
@@ -827,16 +987,15 @@ function renderOverview() {
   const appointments = allAppointments();
   const month = monthFinance();
   const progress = Math.min(100, month.forecast ? month.fact / month.forecast * 100 : 0);
-  const paidPrepayments = appointments.filter((item) => item.status === "upcoming" && item.prepayment_paid).reduce((sum, item) => sum + item.prepayment, 0);
   $("#kpis").innerHTML = [
     metricKpi("Доход", money(stats.total_income), "за весь период"),
     metricKpi("Выполнено записей", stats.completed),
     metricKpi("Подтверждено", stats.upcoming, "будущие записи"),
-    metricKpi("Предоплаты", money(paidPrepayments), "по подтверждённым")
+    metricKpi("Клиентов", clients.length, "в базе отчёта")
   ].join("");
   $("#monthFact").textContent = money(month.fact);
   $("#monthForecast").textContent = money(month.forecast);
-  $("#monthPrepayment").textContent = money(month.prepaid);
+  $("#monthPrepayment").textContent = money(month.booked);
   $("#monthProgress").style.width = progress + "%";
   $("#monthProgressText").textContent = month.forecast ? "Получено " + Math.round(progress) + "% от ожидаемого итога месяца" : "Недостаточно данных для прогноза";
   $("#monthDelta").textContent = Math.round(progress) + "%";
@@ -852,7 +1011,7 @@ function clientDetails(id) {
   const rows = allAppointments().filter((item) => String(item.user_id) === String(id)).sort((a, b) => String(b.datetime).localeCompare(String(a.datetime)));
   const url = telegramUrl(client);
   $("#clientModalContent").innerHTML = '<div class="modal-profile"><span class="avatar large">' + esc(client.name[0]?.toUpperCase() || "?") + '</span><div><h2>' + esc(client.name) + '</h2><p>' + (url ? '<a class="user-link" target="_blank" rel="noopener" href="' + esc(url) + '">' + esc(usernameOf(client) || "Открыть Telegram") + "</a>" : "Telegram не указан") + (client.phone ? " · " + esc(client.phone) : "") + '</p></div></div><div class="detail-grid"><div class="detail-chip"><span>Визитов</span><b>' + client.visits + '</b></div><div class="detail-chip"><span>Потратил</span><b>' + money(client.spent) + '</b></div><div class="detail-chip"><span>Средний интервал</span><b>' + (client.avg_interval_days ? client.avg_interval_days + " дн." : "—") + '</b></div><div class="detail-chip"><span>Последний визит</span><b>' + dateText(client.last_visit) + '</b></div></div><div class="actions modal-actions"><button class="ghost" type="button" data-copy="' + esc(usernameOf(client) || client.phone || "") + '">Скопировать контакт</button>' + (url ? '<a class="ghost" target="_blank" rel="noopener" href="' + esc(url) + '">Открыть Telegram</a>' : "") + '<button class="ghost" type="button" data-remind="' + esc(client.name) + '">Текст напоминания</button></div><h3>История записей</h3><div class="timeline">' + (rows.map((item) =>
-    '<button class="timeline-item" type="button" data-appointment="' + esc(item.id) + '"><b>' + dateTimeText(item.datetime) + " · " + esc(item.service) + '</b><small>' + money(item.price) + " · " + statusLabel(item.status) + (item.prepayment ? " · " + (item.prepayment_paid ? "предоплата внесена" : "ожидает подтверждения") : "") + "</small>" + (item.client_note || item.appointment_note || item.comment_text ? '<em>' + esc(item.client_note || item.appointment_note || item.comment_text) + "</em>" : "") + "</button>"
+    '<button class="timeline-item" type="button" data-appointment="' + esc(item.id) + '"><b>' + dateTimeText(item.datetime) + " · " + esc(item.service) + '</b><small>' + money(revenueOf(item)) + " · " + statusLabel(item.status) + (item.prepayment ? " · предоплата по настройке " + money(item.prepayment) : "") + "</small>" + (item.client_note || item.appointment_note || item.comment_text ? '<em>' + esc(item.client_note || item.appointment_note || item.comment_text) + "</em>" : "") + "</button>"
   ).join("") || emptyState("История записей отсутствует.")) + "</div>";
   openModal("clientModal");
 }
@@ -860,7 +1019,7 @@ function clientDetails(id) {
 function appointmentDetails(id) {
   const item = allAppointments().find((row) => String(row.id) === String(id));
   if (!item) return;
-  $("#drillModalContent").innerHTML = '<div class="modal-title-row"><div><span class="status ' + item.status + '">' + statusLabel(item.status) + '</span><h2>' + esc(item.service) + '</h2><p>' + dateTimeText(item.datetime) + "</p></div><b>" + money(item.price) + '</b></div>' + clientProfile({ ...item, name: item.client }) + '<div class="detail-grid"><div class="detail-chip"><span>Стоимость</span><b>' + money(item.price) + '</b></div><div class="detail-chip"><span>Предоплата</span><b>' + (item.prepayment ? money(item.prepayment) : "Не требуется") + '</b></div><div class="detail-chip"><span>Способ</span><b>' + (item.prepayment_source === "online" ? "Платёжная система" : item.prepayment_paid ? "Подтверждена мастером" : "Не указан") + '</b></div></div><div class="note-stack">' + [item.client_note, item.appointment_note, item.comment_text].filter(Boolean).map((text) => '<div class="metric-note">' + esc(text) + "</div>").join("") + "</div>";
+  $("#drillModalContent").innerHTML = '<div class="modal-title-row"><div><span class="status ' + item.status + '">' + statusLabel(item.status) + '</span><h2>' + esc(item.service) + '</h2><p>' + dateTimeText(item.datetime) + "</p></div><b>" + money(revenueOf(item)) + '</b></div>' + clientProfile({ ...item, name: item.client }) + '<div class="detail-grid"><div class="detail-chip"><span>Цена услуги</span><b>' + money(item.price) + '</b></div><div class="detail-chip"><span>Предоплата по настройке</span><b>' + (item.prepayment ? money(item.prepayment) : "Не требуется") + '</b></div><div class="detail-chip"><span>Учёт в доходе</span><b>' + (separatePrepayment ? "Добавляется отдельно" : "Входит в цену услуги") + '</b></div></div><div class="metric-note">Факт получения или возврата предоплаты страница не определяет.</div><div class="note-stack">' + [item.client_note, item.appointment_note, item.comment_text].filter(Boolean).map((text) => '<div class="metric-note">' + esc(text) + "</div>").join("") + "</div>";
   openModal("drillModal");
 }
 
@@ -868,10 +1027,11 @@ function openDrill(key) {
   const group = drillGroups.get(key);
   if (!group) return;
   const rows = group.rows || [];
-  const total = rows.reduce((sum, item) => sum + item.price, 0);
-  $("#drillModalContent").innerHTML = '<div class="modal-title-row"><div><span class="eyebrow">РАСШИФРОВКА</span><h2>' + esc(group.title) + '</h2><p>' + rows.length + " записей</p></div><b>" + money(total) + '</b></div><div class="drill-list">' + (rows.sort((a, b) => String(b.datetime).localeCompare(String(a.datetime))).map((item) =>
-    '<button type="button" data-appointment="' + esc(item.id) + '"><span><b>' + esc(item.client) + '</b><small>' + dateTimeText(item.datetime) + " · " + esc(item.service) + '</small></span><strong>' + money(item.price) + "</strong></button>"
-  ).join("") || emptyState("Для прогноза пока нет конкретных записей.")) + "</div>";
+  const total = group.value ?? rows.reduce((sum, item) => sum + revenueOf(item), 0);
+  const note = group.note ? '<div class="metric-note">' + esc(group.note) + '</div>' : "";
+  $("#drillModalContent").innerHTML = '<div class="modal-title-row"><div><span class="eyebrow">РАСШИФРОВКА</span><h2>' + esc(group.title) + '</h2><p>' + rows.length + " записей</p></div><b>" + money(total) + '</b></div>' + note + '<div class="drill-list">' + (rows.slice().sort((a, b) => String(b.datetime).localeCompare(String(a.datetime))).map((item) =>
+    '<button type="button" data-appointment="' + esc(item.id) + '"><span><b>' + esc(item.client) + '</b><small>' + dateTimeText(item.datetime) + " · " + esc(item.service) + '</small></span><strong>' + money(revenueOf(item)) + "</strong></button>"
+  ).join("") || emptyState("Для этого показателя пока нет конкретных записей.")) + "</div>";
   openModal("drillModal");
 }
 
@@ -882,8 +1042,13 @@ function openForecastMonth(key) {
 }
 
 function openService(service) {
-  const rows = allAppointments().filter((item) => item.service === service);
-  drillGroups.set("service:" + service, { title: service, rows });
+  const rows = allAppointments().filter((item) => item.service === service && item.status === "completed");
+  drillGroups.set("service:" + service, {
+    title: service + " · выполненные записи",
+    rows,
+    value: rows.reduce((sum, item) => sum + revenueOf(item), 0),
+    note: "Доход и количество здесь совпадают с разделом «Услуги»: учитываются только выполненные записи."
+  });
   openDrill("service:" + service);
 }
 
@@ -899,6 +1064,82 @@ function closeModal(id) {
   modal.classList.remove("open");
   modal.setAttribute("aria-hidden", "true");
   if (!document.querySelector(".modal.open")) document.body.classList.remove("modal-open");
+}
+
+const tourSteps = [
+  { section: "overview", selector: "#kpis", title: "Обзор", text: "Здесь только главные показатели. Доход считается по выполненным записям; будущие подтверждённые записи показываются отдельно как ожидаемые." },
+  { section: "money", selector: "#revenueMode", title: "Как считается предоплата", text: "Обычно предоплата уже входит в полную цену услуги, поэтому второй раз к доходу не прибавляется. Если в вашем прайсе цена указана без предоплаты, включите этот переключатель — тогда она будет добавляться отдельно во всех финансовых расчётах." },
+  { section: "clients", selector: "#clientSegmentsLarge", title: "Клиенты", text: "Сегменты зависят от количества выполненных визитов и давности последнего визита. Порог «спящего» клиента можно менять сверху." },
+  { section: "services", selector: "#serviceBars", title: "Услуги", text: "Доход услуги и число записей считаются только по выполненным визитам. Нажмите на услугу — откроется ровно тот же набор записей." },
+  { section: "behavior", selector: "#lvTable", title: "Лояльность", text: "LV 0–100 учитывает повторные визиты, свежесть последнего визита, отмены, регулярность и общий вклад. Тип клиента рядом объясняет текущее поведение простыми словами." },
+  { section: "forecast", selector: "#forecastKpis", title: "Прогноз", text: "Прогноз строится по полным прошлым месяцам и не считается обещанием дохода. «Уже подтверждено» — реальные будущие записи, а сценарии помогают оценить диапазон." }
+];
+let tourIndex = 0;
+let tourReturnSection = "overview";
+
+function clearTourFocus() {
+  document.querySelector(".tour-focus")?.classList.remove("tour-focus");
+}
+
+function renderTourStep() {
+  const step = tourSteps[tourIndex];
+  clearTourFocus();
+  goToSection(step.section);
+  $("#tourStepLabel").textContent = "Шаг " + (tourIndex + 1) + " из " + tourSteps.length;
+  $("#tourTitle").textContent = step.title;
+  $("#tourText").textContent = step.text;
+  $("#tourPrev").disabled = tourIndex === 0;
+  $("#tourNext").textContent = tourIndex === tourSteps.length - 1 ? "Готово" : "Далее →";
+  requestAnimationFrame(() => {
+    const target = $(step.selector);
+    if (!target) return;
+    target.classList.add("tour-focus");
+    target.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+  });
+}
+
+function startTour() {
+  tourReturnSection = document.querySelector(".section.active")?.id || "overview";
+  tourIndex = 0;
+  $("#tourCoach").classList.add("open");
+  $("#tourCoach").setAttribute("aria-hidden", "false");
+  document.body.classList.add("tour-open");
+  renderTourStep();
+}
+
+function closeTour(restore = true) {
+  clearTourFocus();
+  $("#tourCoach").classList.remove("open");
+  $("#tourCoach").setAttribute("aria-hidden", "true");
+  document.body.classList.remove("tour-open");
+  if (restore) goToSection(tourReturnSection);
+}
+
+function showNavigationAttention() {
+  const help = $("#helpBtn");
+  help?.classList.add("attention");
+  setTimeout(() => help?.classList.remove("attention"), 2600);
+  if (window.matchMedia("(max-width: 900px)").matches) {
+    const sidebar = $(".sidebar");
+    sidebar?.classList.add("nav-attention");
+    setTimeout(() => sidebar?.classList.remove("nav-attention"), 3200);
+  }
+}
+
+function syncRevenueModeControl() {
+  const toggle = $("#separatePrepaymentToggle");
+  if (toggle) toggle.checked = separatePrepayment;
+  $("#revenueMode")?.classList.toggle("is-separate", separatePrepayment);
+}
+
+function setSeparatePrepayment(enabled) {
+  separatePrepayment = Boolean(enabled);
+  localStorage.setItem("aethelStatsSeparatePrepayment", separatePrepayment ? "1" : "0");
+  page = 1;
+  render();
+  showToast(separatePrepayment
+    ? "Предоплата теперь добавляется к цене услуги"
+    : "Предоплата снова считается частью цены услуги");
 }
 
 function populateFilters() {
@@ -919,6 +1160,7 @@ function render() {
   const appointments = allAppointments();
   $("#masterName").textContent = report.master_name || "Статистика мастера";
   $("#updatedAt").textContent = report.generated_at ? "обновлено " + dateTimeText(report.generated_at) : "онлайн";
+  syncRevenueModeControl();
   populateFilters();
   renderOverview();
   renderFinance();
@@ -969,6 +1211,7 @@ async function load() {
   const url = new URLSearchParams(location.search).get("report");
   if (!url) {
     render();
+    showNavigationAttention();
     return;
   }
   try {
@@ -976,10 +1219,12 @@ async function load() {
     if (!response.ok) throw new Error("HTTP " + response.status);
     report = await response.json();
     render();
+    showNavigationAttention();
   } catch (error) {
     console.error(error);
     showToast("Не удалось загрузить отчёт. Проверьте срок действия ссылки.");
     render();
+    showNavigationAttention();
   }
 }
 
@@ -1007,8 +1252,26 @@ $("#prevPageMobile")?.addEventListener("click", () => { page = Math.max(1, page 
 $("#nextPageMobile")?.addEventListener("click", () => { page += 1; renderAppointments(filteredAppointments()); });
 $("#printBtn")?.addEventListener("click", () => window.print());
 $("#copyLinkBtn")?.addEventListener("click", () => copyText(location.href));
+$("#separatePrepaymentToggle")?.addEventListener("change", (event) => setSeparatePrepayment(event.target.checked));
+$("#prepaymentHelp")?.addEventListener("click", (event) => {
+  event.stopPropagation();
+  const popover = $("#prepaymentHelpPopover");
+  const open = popover?.classList.toggle("open");
+  popover?.setAttribute("aria-hidden", open ? "false" : "true");
+});
+$("#helpBtn")?.addEventListener("click", startTour);
+$("#tourClose")?.addEventListener("click", () => closeTour(true));
+$("#tourPrev")?.addEventListener("click", () => { if (tourIndex > 0) { tourIndex -= 1; renderTourStep(); } });
+$("#tourNext")?.addEventListener("click", () => {
+  if (tourIndex >= tourSteps.length - 1) closeTour(true);
+  else { tourIndex += 1; renderTourStep(); }
+});
 
 document.addEventListener("click", (event) => {
+  if (!event.target.closest("#prepaymentHelpPopover") && !event.target.closest("#prepaymentHelp")) {
+    $("#prepaymentHelpPopover")?.classList.remove("open");
+    $("#prepaymentHelpPopover")?.setAttribute("aria-hidden", "true");
+  }
   const go = event.target.closest("[data-go]");
   if (go) goToSection(go.dataset.go);
   const client = event.target.closest("[data-client]");
@@ -1043,7 +1306,10 @@ document.addEventListener("click", (event) => {
 });
 
 document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape") $$(".modal.open").forEach((modal) => closeModal(modal.id));
+  if (event.key === "Escape") {
+    if ($("#tourCoach")?.classList.contains("open")) closeTour(true);
+    else $$(".modal.open").forEach((modal) => closeModal(modal.id));
+  }
   if ((event.key === "Enter" || event.key === " ") && event.target.matches("[data-drill]")) {
     event.preventDefault();
     openDrill(event.target.dataset.drill);

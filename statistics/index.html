@@ -18,7 +18,7 @@
   <header class="topbar">
     <a class="brand" href="https://www.aethelbotstore.ru/" aria-label="AETHEL"><img class="brand-mark" src="aethel-eye-logo.png" alt=""><span>AETHEL</span></a>
     <div class="report-meta"><span id="masterName">Статистика мастера</span><span class="dot">·</span><span id="updatedAt">загрузка…</span></div>
-    <div class="top-actions"><button class="ghost compact" id="copyLinkBtn" type="button"><span>Скопировать ссылку</span><b>⌁</b></button><button class="ghost compact" id="printBtn" type="button"><span>Печать / PDF</span><b>↗</b></button></div>
+    <div class="top-actions"><button class="ghost compact help-button" id="helpBtn" type="button" aria-label="Как читать статистику"><span>Как читать</span><b>?</b></button><button class="ghost compact" id="copyLinkBtn" type="button"><span>Скопировать ссылку</span><b>⌁</b></button><button class="ghost compact" id="printBtn" type="button"><span>Печать / PDF</span><b>↗</b></button></div>
   </header>
   <div class="layout">
     <aside class="sidebar" aria-label="Разделы статистики">
@@ -37,7 +37,7 @@
         <div class="section-heading"><div><div class="eyebrow">ПОНЯТНО О ГЛАВНОМ</div><h1>Пульс вашего бизнеса</h1><p class="lead">Главные цифры, ближайшая загрузка и точки роста — без сложных таблиц.</p></div><div class="live-pill"><i></i> Данные отчёта</div></div>
         <div class="kpis" id="kpis"></div>
         <div class="grid two overview-top">
-          <article class="card hero-finance"><div class="card-head"><div><h2>Этот месяц</h2><p>Факт, подтверждённые записи и расчётный итог</p></div><span class="badge" id="monthDelta">—</span></div><div class="fact-grid"><div><span>Уже заработано</span><b id="monthFact">—</b></div><div><span>Ожидаемый итог</span><b id="monthForecast">—</b></div><div><span>Предоплаты</span><b id="monthPrepayment">—</b></div></div><div class="progress"><i id="monthProgress"></i></div><small class="muted" id="monthProgressText">—</small></article>
+          <article class="card hero-finance"><div class="card-head"><div><h2>Этот месяц</h2><p>Факт, подтверждённые записи и расчётный итог</p></div><span class="badge" id="monthDelta">—</span></div><div class="fact-grid"><div><span>Уже заработано</span><b id="monthFact">—</b></div><div><span>Ожидаемый итог</span><b id="monthForecast">—</b></div><div><span>Подтверждено вперёд</span><b id="monthPrepayment">—</b></div></div><div class="progress"><i id="monthProgress"></i></div><small class="muted" id="monthProgressText">—</small></article>
           <article class="card"><div class="card-head"><div><h2>Что важно сейчас</h2><p>Автоматические подсказки по текущей базе</p></div></div><div id="insights" class="insights"></div></article>
         </div>
         <article class="card chart-card spotlight">
@@ -54,11 +54,19 @@
 
       <section id="money" class="section">
         <div class="eyebrow">ФИНАНСЫ</div><h1>Доход без догадок</h1><p class="lead">Соберите собственный отчёт: выберите показатель, период, услугу и детализацию.</p>
+        <div class="revenue-mode" id="revenueMode">
+          <label class="switch-row" for="separatePrepaymentToggle">
+            <span class="switch-copy"><b>Не включать предоплату в стоимость услуги</b><small>По умолчанию предоплата считается частью полной цены услуги и второй раз к доходу не прибавляется.</small></span>
+            <span class="switch"><input id="separatePrepaymentToggle" type="checkbox"><i></i></span>
+          </label>
+          <button class="info-help" id="prepaymentHelp" type="button" aria-label="Как считается предоплата">?</button>
+          <div class="info-popover" id="prepaymentHelpPopover" role="note" aria-hidden="true"><b>Как работает переключатель</b><p><strong>Выключен:</strong> если услуга стоит 3 000 ₽ и предоплата 500 ₽, доход после выполнения — 3 000 ₽. Предоплата считается частью этих 3 000 ₽.</p><p><strong>Включён:</strong> считается, что 3 000 ₽ — цена без предоплаты, поэтому доход после выполнения — 3 500 ₽.</p><p>Страница не определяет, была ли предоплата фактически получена, возвращена или удержана: бот со скриншотами этого надёжно не хранит.</p></div>
+        </div>
         <div class="kpis" id="moneyKpis"></div>
         <article class="card analytics-lab">
           <div class="card-head responsive-head"><div><span class="lab-label">ИНТЕРАКТИВНЫЙ ОТЧЁТ</span><h2>Конструктор аналитики</h2><p>Любые срезы по доходу, записям, предоплатам и услугам.</p></div><button class="ghost" id="resetAnalytics" type="button">Сбросить</button></div>
           <div class="analytics-controls">
-            <label><span>Показатель</span><select id="analyticsMetric"><option value="income">Доход</option><option value="appointments">Количество записей</option><option value="avg_check">Средний чек</option><option value="prepayment">Предоплаты</option></select></label>
+            <label><span>Показатель</span><select id="analyticsMetric"><option value="income">Доход</option><option value="appointments">Количество записей</option><option value="avg_check">Средний чек</option><option value="prepayment">Размер предоплаты по настройке</option></select></label>
             <label><span>Группировка</span><select id="analyticsGroup"><option value="day">Дни</option><option value="week">Недели</option><option value="month" selected>Месяцы</option><option value="year">Годы</option><option value="service">Услуги</option><option value="month_service">Месяцы × услуги</option></select></label>
             <label><span>Статус</span><select id="analyticsStatus"><option value="completed" selected>Выполненные</option><option value="upcoming">Подтверждённые</option><option value="pending">Ожидают подтверждения</option><option value="all">Все, кроме отмен</option></select></label>
             <label><span>Услуга</span><select id="analyticsService"><option value="all">Все услуги</option></select></label>
@@ -69,7 +77,7 @@
         </article>
         <div class="grid two">
           <article class="card"><div class="card-head"><div><h2>План / факт</h2><p>Сколько уже получено и сколько ожидается</p></div></div><div id="planFact" class="plan-fact"></div></article>
-          <article class="card"><div class="card-head"><div><h2>Предоплаты</h2><p>Онлайн и подтверждённые мастером учитываются одинаково</p></div></div><div id="prepaymentSummary" class="plan-fact"></div></article>
+          <article class="card"><div class="card-head"><div><h2>Предоплата</h2><p>Информация о размере предоплаты в настройках услуг, а не подтверждение факта оплаты</p></div></div><div id="prepaymentSummary" class="plan-fact"></div></article>
         </div>
         <article class="card"><div class="card-head"><div><h2>Доход по месяцам</h2><p>Нажмите на период для расшифровки</p></div></div><div class="chart tall" id="incomeChartLarge"></div></article>
         <div class="grid three"><article class="card metric-card"><h2>Средний чек</h2><div class="big-number" id="avgCheck">—</div><p class="muted">Средняя стоимость выполненной записи.</p></article><article class="card metric-card"><h2>Повторные визиты</h2><div class="big-number" id="repeatRate">—</div><p class="muted">Доля клиентов, которые возвращались.</p></article><article class="card metric-card"><h2>Отмены</h2><div class="big-number" id="cancelRate">—</div><p class="muted">Доля отменённых записей.</p></article></div>
@@ -98,9 +106,9 @@
       </section>
 
       <section id="behavior" class="section">
-        <div class="eyebrow">ПОВЕДЕНИЕ КЛИЕНТОВ</div><h1>Кого вы обслуживаете</h1><p class="lead">Метрики учитывают историю посещений, чек, регулярность и отмены — один дорогой визит не делает клиента VIP.</p>
-        <div class="grid two"><article class="card"><div class="card-head"><div><h2>LV-индекс</h2><p>Комплексная оценка ценности и лояльности</p></div></div><div id="lvLegend" class="lv-legend"></div><div class="table-wrap"><table><thead><tr><th>Клиент</th><th>LV</th><th>Уровень</th><th>Рекомендация</th></tr></thead><tbody id="lvTable"></tbody></table></div></article><article class="card"><div class="card-head"><div><h2>Типы клиентов</h2><p>Поведенческие группы и вклад в доход</p></div></div><div id="typeIncome"></div><div class="metric-note" id="gdrNote"></div></article></div>
-        <article class="card"><div class="card-head"><div><h2>Loyalty DNA</h2><p>Частота, отмены, чек, привычное время и интервал</p></div></div><div class="table-wrap"><table><thead><tr><th>Клиент</th><th>Username</th><th>Код</th><th>Тип</th><th>Стратегия</th></tr></thead><tbody id="dnaTable"></tbody></table></div></article>
+        <div class="eyebrow">ПОВЕДЕНИЕ КЛИЕНТОВ</div><h1>Лояльность и удержание</h1><p class="lead">LV показывает силу отношений с клиентом: повторные визиты, актуальность последнего визита, надёжность, регулярность и вклад в выручку. Один дорогой визит сам по себе не делает клиента лояльным.</p>
+        <div class="grid two"><article class="card"><div class="card-head"><div><h2>Индекс лояльности (LV)</h2><p>0–100: чем выше, тем устойчивее отношения с клиентом</p></div></div><div id="lvLegend" class="lv-legend"></div><div class="table-wrap horizontal-lock"><table><thead><tr><th>Клиент</th><th>LV</th><th>Уровень</th><th>Что делать</th></tr></thead><tbody id="lvTable"></tbody></table></div></article><article class="card"><div class="card-head"><div><h2>Типы клиентов</h2><p>Простые группы по реальному поведению и вкладу в доход</p></div></div><div id="typeIncome"></div><div class="metric-note" id="gdrNote"></div></article></div>
+        <article class="card"><div class="card-head"><div><h2>Профиль поведения</h2><p>Короткая расшифровка: визиты, отмены, обычный интервал и любимое время</p></div></div><div class="table-wrap horizontal-lock"><table><thead><tr><th>Клиент</th><th>Username</th><th>Профиль</th><th>Тип</th><th>Что делать</th></tr></thead><tbody id="dnaTable"></tbody></table></div></article>
       </section>
 
       <section id="forecast" class="section">
@@ -116,6 +124,14 @@
   </div>
   <div id="clientModal" class="modal" aria-hidden="true"><div class="modal-box"><button class="modal-close" data-close-modal="clientModal" type="button" aria-label="Закрыть">×</button><div id="clientModalContent"></div></div></div>
   <div id="drillModal" class="modal" aria-hidden="true"><div class="modal-box wide-modal"><button class="modal-close" data-close-modal="drillModal" type="button" aria-label="Закрыть">×</button><div id="drillModalContent"></div></div></div>
+  <div id="tourCoach" class="tour-coach" aria-hidden="true">
+    <div class="tour-card" role="dialog" aria-modal="true" aria-labelledby="tourTitle">
+      <div class="tour-progress"><span id="tourStepLabel">Шаг 1 из 6</span><button id="tourClose" type="button" aria-label="Закрыть обучение">×</button></div>
+      <h2 id="tourTitle">Как читать статистику</h2>
+      <p id="tourText"></p>
+      <div class="tour-actions"><button class="ghost" id="tourPrev" type="button">← Назад</button><button class="tour-next" id="tourNext" type="button">Далее →</button></div>
+    </div>
+  </div>
   <div id="toast" class="toast" role="status"></div>
   <script src="app.js"></script>
 </body>
